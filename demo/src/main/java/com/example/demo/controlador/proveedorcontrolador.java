@@ -58,26 +58,14 @@ public class proveedorcontrolador {
         return "redirect:/Proveedores";
     }
 
-    @GetMapping("/addproveedor")
-    public String mostrarFormularioProveedor(Model model) {
-    try {
-               
-    } catch (Exception e) {
-        System.out.println("Error al cargar datos para el formulario: " + e.getMessage());
+    @PostMapping("/insertProveedor") // agregar base de datos
+    public String insertProveedor(@Validated proveedorenty objProvedor) {
+        try {
+            proveedorservicio.save(objProvedor);
+        } catch (Exception e) {
+            System.out.println("Error insetar proveedor: " + e.getMessage());
+        }
+        return "redirect:/Proveedores";
     }
-    return "addProveedor";
-    
-    }
-
-    @PostMapping("/insertProveedor")//agregar base de datos
-	public String insertProveedor(@Validated proveedorenty objProvedor) {
-		try {
-			proveedorservicio.save(objProvedor);
-		} catch (Exception e) {
-			System.out.println("Error insetar proveedor: " + e.getMessage());
-		}
-		return "redirect:/Proveedores";
-	}
-
 
 }

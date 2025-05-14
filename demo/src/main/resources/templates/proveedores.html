@@ -215,6 +215,148 @@
         }
 
 
+        /* Fondo del modal: oculto por defecto, full-screen fijo y semitransparente */
+        /* Modal Background */
+        /* Modal Background */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Clase para mostrar el modal */
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Modal Container */
+        .modal-content {
+            background-color: #e6f4ea;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-30px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal Title */
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Labels and Inputs */
+        .modal-content label {
+            display: block;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="url"],
+        .modal-content input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
+        .modal-content .top-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            padding-top: 1rem;
+        }
+
+        .modal-content button[type="submit"],
+        .modal-content button[type="button"] {
+            flex: 1;
+            min-width: 120px;
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .modal-content button[type="button"] {
+            background-color: #dc2626;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background-color: #15803d;
+        }
+
+        .modal-content button[type="button"]:hover {
+            background-color: #b91c1c;
+        }
+
+        /* Close Button */
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-content button[type="submit"],
+            .modal-content button[type="button"] {
+                flex: 1 0 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+
+
+        /* Hacer responsive: ancho casi completo en pantallas pequeñas */
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 90%;
+                margin: 10% auto;
+            }
+        }
+
 
         @media (max-width: 768px) {
             .container {
@@ -263,9 +405,8 @@
                 <div class="card">
                     <div class="card">
                         <div class="top-actions">
-                            <form th:action="@{/addproveedor}" method="get" class="d-inline">
-                                <button type="submit" class="btn btn-outline-success">Agregar Proveedor</button>
-                            </form>
+                            <button id="openModalBtn">Agregar Proveedor</button>
+
                         </div>
                         <div class="center-search">
                             <div class="search-container">
@@ -314,6 +455,35 @@
                 </div>
         </main>
     </div>
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Añadir Proveedor</h2>
+            <form method="post" action="/insertProveedor">
+                <label>Nombre de la Empresa:<br>
+                    <input type="text" id="nombreempresa" name="nombre_empresa" placeholder="Ej. Compumax" required>
+                </label><br>
+                <label>Contacto Principal::<br>
+                    <input type="text" id="ContactoPrincipal" name="contacto_principal" placeholder="Ej. Kevin Junior"
+                        required>
+                </label><br>
+                <label>Telefono:<br>
+                    <input type="text" id="Telefono" name="telefono" placeholder="Ej. 3012345678" required>
+                </label><br>
+                <label>Correo Electrónico:<br>
+                    <input type="email" id="Correo" name="email" placeholder="Ej. Kevin Junior" required>
+                </label><br>
+                <label>Dirección:<br>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123" required>
+                </label><br>
+                <div class="top-actions">
+                    <button type="submit">Guardar</button>
+                    <button type="button"
+                        onclick="document.getElementById('productModal').classList.remove('show')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -332,6 +502,28 @@
                 });
             });
         });
+
+        // Referencias a elementos
+        const modal = document.getElementById("productModal");
+        const openBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.querySelector(".close");
+
+        // Mostrar modal al hacer clic en el botón
+        openBtn.onclick = () => {
+            modal.classList.add("show");
+        };
+
+        // Ocultar modal al hacer clic en la X
+        closeBtn.onclick = () => {
+            modal.classList.remove("show");
+        };
+
+        // Ocultar modal al hacer clic fuera del contenido
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.classList.remove("show");
+            }
+        };
     </script>
 </body>
 

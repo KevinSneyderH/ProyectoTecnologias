@@ -214,64 +214,147 @@
             background-color: #0f363d;
         }
 
+
         /* Fondo del modal: oculto por defecto, full-screen fijo y semitransparente */
-.modal {
-    display: none;             /* Oculto por defecto */
-    position: fixed;           /* Fijo en la página */
-    z-index: 1000;             /* Encima de todo */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Negro con opacidad */
-    opacity: 0;
-    transition: opacity 0.3s ease;     /* Transición suave de opacidad */
-}
+        /* Modal Background */
+        /* Modal Background */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-/* Clase para mostrar el modal */
-.modal.show {
-    display: block;
-    opacity: 1;
-}
+        /* Clase para mostrar el modal */
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
 
-/* Contenido del modal: centrado, con fondo claro y transiciones */
-.modal-content {
-    background-color: #fff;
-    margin: 5% auto;          /* Centrado vertical y horizontal */
-    padding: 20px;
-    border-radius: 8px;
-    width: 50%;
-    max-width: 500px;
-    transform: translateY(-30px);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
+        /* Modal Container */
+        .modal-content {
+            background-color: #e6f4ea;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-30px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
 
-/* Animar el contenido al mostrarse */
-.modal.show .modal-content {
-    transform: translateY(0);
-    opacity: 1;
-}
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
-/* Estilos para el botón de cierre (X) */
-.close {
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-}
-.close:hover {
-    color: #000;
-}
+        /* Modal Title */
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
 
-/* Hacer responsive: ancho casi completo en pantallas pequeñas */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 90%;
-        margin: 10% auto;
-    }
-}
+        /* Form Labels and Inputs */
+        .modal-content label {
+            display: block;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="url"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
+        .modal-content .top-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            padding-top: 1rem;
+        }
+
+        .modal-content button[type="submit"],
+        .modal-content button[type="button"] {
+            flex: 1;
+            min-width: 120px;
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .modal-content button[type="button"] {
+            background-color: #dc2626;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background-color: #15803d;
+        }
+
+        .modal-content button[type="button"]:hover {
+            background-color: #b91c1c;
+        }
+
+        /* Close Button */
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-content button[type="submit"],
+            .modal-content button[type="button"] {
+                flex: 1 0 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+
+
+        /* Hacer responsive: ancho casi completo en pantallas pequeñas */
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 90%;
+                margin: 10% auto;
+            }
+        }
 
 
         @media (max-width: 768px) {
@@ -286,7 +369,6 @@
             }
 
         }
-        
     </style>
 </head>
 
@@ -322,8 +404,8 @@
 
                 <div class="card">
                     <div class="top-actions">
-                            <button id="openModalBtn">Agregar Producto</button>
-                        
+                        <button id="openModalBtn">Agregar Producto</button>
+
                     </div>
 
                     <div class="center-search">
@@ -340,59 +422,67 @@
                     <h3>Productos</h3>
                     <div class="table-container">
                         <table id="productTable">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Precio Venta</th>
-            <th>Cantidad en stock</th>
-            <th>Proveedor(es)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="producto : ${listaProductos}">
-            <td th:text="${producto.nombre}"></td>
-            <td th:text="${producto.precio_venta_unitario}"></td>
-            <td th:text="${producto.cantidad_en_stock}"></td>
-            <td>
-                <span th:each="detalle : ${producto.detallesCompra}" 
-                      th:text="${detalle.idProveedor.nombre_empresa}">Sin proveedor</span>
-            </td>
-            <td>
-                <form th:action="@{/deleteProducto}" method="post">
-                    <input type="hidden" name="idproducto" th:value="${producto.id_producto}" />
-                    <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">
-                        Eliminar
-                    </button>
-                </form>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio Venta</th>
+                                    <th>Cantidad en stock</th>
+                                    <th>Proveedor(es)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="producto : ${listaProductos}">
+                                    <td th:text="${producto.nombre}"></td>
+                                    <td th:text="${producto.precio_venta_unitario}"></td>
+                                    <td th:text="${producto.cantidad_en_stock}"></td>
+                                    <td>
+                                        <span th:each="detalle : ${producto.detallesCompra}"
+                                            th:text="${detalle.idProveedor.nombre_empresa}">Sin proveedor</span>
+                                    </td>
+                                    <td>
+                                        <form th:action="@{/deleteProducto}" method="post">
+                                            <input type="hidden" name="idproducto" th:value="${producto.id_producto}" />
+                                            <div class="top-actions">
+                                                <button type="submit"
+                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-
     <div id="productModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <form th:action="@{/insertProducto}" method="post">
-          <label>Nombre:<br>
-            <input type="text" name="nombre" required />
-          </label><br>
-          <label>Precio Unitario:<br>
-            <input type="number" step="0.01" name="precio_venta_unitario" required />
-          </label><br>
-          <label>URL Imagen:<br>
-            <input type="url" name="url_imagen" required />
-          </label><br>
-          <button type="submit">Guardar</button>
-        </form>
-      </div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Añadir Producto</h2>
+            <form method="post" action="/insertProducto">
+                <label>Nombre:<br>
+                    <input type="text" id="nombreproducto" name="nombre" placeholder="Ej. televisor" required>
+                </label><br>
+                <label>Precio Unitario:<br>
+                    <input type="text" id="PrecioVenta" name="precio_venta_unitario" placeholder="Ej. 200" required>
+                </label><br>
+                <label>URL Imagen:<br>
+                    <input type="text" id="url" name="url_imagen"
+                        placeholder="Ej. https://www.compumax.com/televisor.jpg" required>
+                </label><br>
+                <div class="top-actions">
+                    <button type="submit">Guardar</button>
+                    <button type="button"
+                        onclick="document.getElementById('productModal').classList.remove('show')">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
+
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -413,29 +503,29 @@
         });
 
         // Referencias a elementos
-const modal = document.getElementById("productModal");
-const openBtn = document.getElementById("openModalBtn");
-const closeBtn = document.querySelector(".close");
+        const modal = document.getElementById("productModal");
+        const openBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.querySelector(".close");
 
-// Mostrar modal al hacer clic en el botón
-openBtn.onclick = () => {
-    modal.classList.add("show");
-};
+        // Mostrar modal al hacer clic en el botón
+        openBtn.onclick = () => {
+            modal.classList.add("show");
+        };
 
-// Ocultar modal al hacer clic en la X
-closeBtn.onclick = () => {
-    modal.classList.remove("show");
-};
+        // Ocultar modal al hacer clic en la X
+        closeBtn.onclick = () => {
+            modal.classList.remove("show");
+        };
 
-// Ocultar modal al hacer clic fuera del contenido
-window.onclick = (event) => {
-    if (event.target === modal) {
-        modal.classList.remove("show");
-    }
-};
+        // Ocultar modal al hacer clic fuera del contenido
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.classList.remove("show");
+            }
+        };
     </script>
 
-    
+
 </body>
 
 </html>

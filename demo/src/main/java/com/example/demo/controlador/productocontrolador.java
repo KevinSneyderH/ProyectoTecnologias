@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
 
-import com.example.demo.entidad.detallecompra;
 import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
@@ -17,8 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -51,7 +49,8 @@ public class productocontrolador {
         model.addAttribute("rolUsuario", usuario.getRol());
 
         List<productoenty> listaProductos = productoservicio.findAll(); // recupera todos los usuarios
-        model.addAttribute("listaProductos", listaProductos); // añade la lista de usuarios a la vista// añade la lista de usuarios a la vista
+        model.addAttribute("listaProductos", listaProductos); // añade la lista de usuarios a la vista// añade la lista
+                                                              // de usuarios a la vista
         return "productos";
     }
 
@@ -65,25 +64,14 @@ public class productocontrolador {
         return "redirect:/Productos";
     }
 
-    @GetMapping("/addproducto")
-    public String mostrarFormularioaddproducto(Model model) {
-    try {
-               
-    } catch (Exception e) {
-        System.out.println("Error al cargar datos para el formulario: " + e.getMessage());
+    @PostMapping("/insertProducto") // agregar base de datos
+    public String insertProducto(@Validated productoenty objProducto) {
+        try {
+            productoservicio.save(objProducto);
+        } catch (Exception e) {
+            System.out.println("Error insetar proveedor: " + e.getMessage());
+        }
+        return "redirect:/Productos";
     }
-    return "addProducto";
-    
-    }
-
-    @PostMapping("/insertProducto")//agregar base de datos
-	public String insertProducto(@Validated productoenty objProducto) {
-		try {
-			productoservicio.save(objProducto);
-		} catch (Exception e) {
-			System.out.println("Error insetar proveedor: " + e.getMessage());
-		}
-		return "redirect:/Productos";
-	}
 
 }
