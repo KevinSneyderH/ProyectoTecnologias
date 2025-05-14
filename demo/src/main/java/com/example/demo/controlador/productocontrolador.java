@@ -79,7 +79,7 @@ public class productocontrolador {
     @PostMapping("/insertProducto")//agregar base de datos
 	public String insertProducto(@Validated productoenty objProducto) {
 		try {
-			productorepositorio.save(objProducto);
+			productoservicio.save(objProducto);
 		} catch (Exception e) {
 			System.out.println("Error insetar proveedor: " + e.getMessage());
 		}
