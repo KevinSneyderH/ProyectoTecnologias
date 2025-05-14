@@ -296,7 +296,6 @@
                                 <tr th:each="producto : ${listaProductos}">
                                     <td th:text="${producto.nombre}"></td>
                                     <td th:text="${producto.precio_venta_unitario}"></td>
-                                    
                                     <td th:text="${producto.cantidad_en_stock}"></td>   
                                     <td>
                                         <form th:action="@{/deleteProducto}" method="post">
