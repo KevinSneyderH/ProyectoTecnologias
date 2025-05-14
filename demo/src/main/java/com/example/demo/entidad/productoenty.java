@@ -1,9 +1,8 @@
 package com.example.demo.entidad;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class productoenty {
@@ -15,15 +14,10 @@ public class productoenty {
     private double precio_venta_unitario;
     private String url_imagen;
 
+    @OneToMany(mappedBy = "idProducto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<detallecompra> detallesCompra;
+
     public productoenty() {
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public int getId_producto() {
@@ -32,6 +26,14 @@ public class productoenty {
 
     public void setId_producto(int id_producto) {
         this.id_producto = id_producto;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public int getCantidad_en_stock() {
@@ -58,4 +60,22 @@ public class productoenty {
         this.url_imagen = url_imagen;
     }
 
+    public List<detallecompra> getDetallesCompra() {
+        return detallesCompra;
+    }
+
+    public void setDetallesCompra(List<detallecompra> detallesCompra) {
+        this.detallesCompra = detallesCompra;
+    }
+
+    // 💡 Método para obtener nombres únicos de proveedores
+    public List<String> getNombresProveedores() {
+        if (this.detallesCompra == null) {
+            return List.of(); // Devuelve una lista vacía si no hay detalles
+        }
+        return this.detallesCompra.stream()
+                .map(detalle -> detalle.getIdProveedor().getNombre_empresa())
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

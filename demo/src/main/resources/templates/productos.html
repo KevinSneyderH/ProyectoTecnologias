@@ -214,6 +214,64 @@
             background-color: #0f363d;
         }
 
+        /* Fondo del modal: oculto por defecto, full-screen fijo y semitransparente */
+.modal {
+    display: none;             /* Oculto por defecto */
+    position: fixed;           /* Fijo en la página */
+    z-index: 1000;             /* Encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Negro con opacidad */
+    opacity: 0;
+    transition: opacity 0.3s ease;     /* Transición suave de opacidad */
+}
+
+/* Clase para mostrar el modal */
+.modal.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Contenido del modal: centrado, con fondo claro y transiciones */
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;          /* Centrado vertical y horizontal */
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    max-width: 500px;
+    transform: translateY(-30px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animar el contenido al mostrarse */
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Estilos para el botón de cierre (X) */
+.close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+.close:hover {
+    color: #000;
+}
+
+/* Hacer responsive: ancho casi completo en pantallas pequeñas */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 90%;
+        margin: 10% auto;
+    }
+}
 
 
         @media (max-width: 768px) {
@@ -228,6 +286,7 @@
             }
 
         }
+        
     </style>
 </head>
 
@@ -263,9 +322,8 @@
 
                 <div class="card">
                     <div class="top-actions">
-                        <form th:action="@{/addproducto}" method="get" class="d-inline">
-                            <button type="submit" class="btn btn-outline-success">Agregar Producto</button>
-                        </form>
+                            <button id="openModalBtn">Agregar Producto</button>
+                        
                     </div>
 
                     <div class="center-search">
@@ -282,41 +340,58 @@
                     <h3>Productos</h3>
                     <div class="table-container">
                         <table id="productTable">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Precio Venta</th>
-                                    <th>Cantidad en stock</th>
-                                    <th>Proveedor</th>
-                                    <th>Acciones</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="producto : ${listaProductos}">
-                                    <td th:text="${producto.nombre}"></td>
-                                    <td th:text="${producto.precio_venta_unitario}"></td>
-                                    <td th:text="${producto.cantidad_en_stock}"></td>   
-                                    <td th:text="${producto.}"></td>
-                                    <td>
-                                        <form th:action="@{/deleteProducto}" method="post">
-                                            <input type="hidden" name="idproducto"
-                                                th:value="${producto.id_producto}" />
-                                            <button type="submit"
-                                                onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">
-                                                Eliminar
-                                            </button>
-                                        </form>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Precio Venta</th>
+            <th>Cantidad en stock</th>
+            <th>Proveedor(es)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="producto : ${listaProductos}">
+            <td th:text="${producto.nombre}"></td>
+            <td th:text="${producto.precio_venta_unitario}"></td>
+            <td th:text="${producto.cantidad_en_stock}"></td>
+            <td>
+                <span th:each="detalle : ${producto.detallesCompra}" 
+                      th:text="${detalle.idProveedor.nombre_empresa}">Sin proveedor</span>
+            </td>
+            <td>
+                <form th:action="@{/deleteProducto}" method="post">
+                    <input type="hidden" name="idproducto" th:value="${producto.id_producto}" />
+                    <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-                                    </td>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <form th:action="@{/insertProducto}" method="post">
+          <label>Nombre:<br>
+            <input type="text" name="nombre" required />
+          </label><br>
+          <label>Precio Unitario:<br>
+            <input type="number" step="0.01" name="precio_venta_unitario" required />
+          </label><br>
+          <label>URL Imagen:<br>
+            <input type="url" name="url_imagen" required />
+          </label><br>
+          <button type="submit">Guardar</button>
+        </form>
+      </div>
     </div>
     <script>
         function toggleSidebar() {
@@ -336,7 +411,31 @@
                 });
             });
         });
+
+        // Referencias a elementos
+const modal = document.getElementById("productModal");
+const openBtn = document.getElementById("openModalBtn");
+const closeBtn = document.querySelector(".close");
+
+// Mostrar modal al hacer clic en el botón
+openBtn.onclick = () => {
+    modal.classList.add("show");
+};
+
+// Ocultar modal al hacer clic en la X
+closeBtn.onclick = () => {
+    modal.classList.remove("show");
+};
+
+// Ocultar modal al hacer clic fuera del contenido
+window.onclick = (event) => {
+    if (event.target === modal) {
+        modal.classList.remove("show");
+    }
+};
     </script>
+
+    
 </body>
 
 </html>
