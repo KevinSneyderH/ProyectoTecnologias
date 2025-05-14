@@ -1,0 +1,44 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Hola</h2>
+
+    <form th:action="@{/logout}" method="post" style="margin-bottom: 20px;">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Contraseña</th>
+            <th>Rol</th>
+            <th>Activo</th>
+            <th>Fecha creación</th>
+            <th>Fecha actualización</th>
+        </tr>
+        <tr th:each="usuario : ${listaUsuarios}">
+            <td th:text="${usuario.id}"></td>
+            <td th:text="${usuario.nombreUsuario}"></td>
+            <td th:text="${usuario.email}"></td>
+            <td th:text="${usuario.contrasena}"></td>
+            <td th:text="${usuario.rol}"></td>
+            <td th:text="${usuario.activo}"></td>
+            <td th:text="${usuario.fechacreacion}"></td>
+            <td th:text="${usuario.fechaactulizacion}"></td>
+        </tr>
+    </table>
+</body>
+
+</html>

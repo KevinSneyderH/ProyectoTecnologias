@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: url('https://ferremakros.com/wp-content/uploads/2019/07/Bodegas-HD.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .background-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            backdrop-filter: blur(10px);
+            z-index: 0;
+        }
+
+        .login-container {
+            background-color: rgba(181, 208, 201, 0.9);
+            width: 400px;
+            padding: 60px 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        .login-container h2 {
+            color: #023047;
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        .input-group .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            color: #555;
+            font-size: 18px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 0;
+        }
+
+        .forgot-password {
+            font-size: 14px;
+            color: #023047;
+            margin-bottom: 30px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            background-color: #023047;
+            color: #fff;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #014f86;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blur"></div>
+    <div class="login-container">
+        <h2>Inicio de Sesión</h2>
+        <form action="/login" method="post">
+            <div class="input-group">
+                <span class="input-icon"><i class="fas fa-user"></i></span>
+                <input type="text" name="username" placeholder="Usuario" required>
+            </div>
+            <div class="input-group">
+                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                <input type="password" name="password" placeholder="Contraseña" required>
+            </div>
+            <a href="#" class="forgot-password">¿Ha olvidado su contraseña?</a>
+            <button type="submit" class="login-btn">Iniciar Sesión</button>
+            <p th:if="${param.error}" style="color:red;">Credenciales incorrectas</p>
+
+        </form>
+
+    </div>
+</body>
+
+</html>
