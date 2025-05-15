@@ -405,7 +405,7 @@
                 <div class="card">
                     <div class="card">
                         <div class="top-actions">
-                            <button id="openModalBtn">Agregar Proveedor</button>
+                            <button id="openModalBtnAgregar">Agregar Proveedor</button>
 
                         </div>
                         <div class="center-search">
@@ -426,7 +426,8 @@
                                         <th>Telefono</th>
                                         <th>Email</th>
                                         <th>Dirección</th>
-                                        <th>Acciones</th>
+                                        <th>Borrar</th>
+                                        <th>Editar</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -437,8 +438,9 @@
                                         <td th:text="${proveedor.email}"></td>
                                         <td th:text="${proveedor.direccion}"></td>
                                         <td>
-                                            <form th:action="@{'/eliminarproveedor/' + ${proveedor.id_proveedor}}"
-                                                method="post">
+                                            <form th:action="@{/deleteProveedor}" method="post">
+                                                <input type="hidden" name="idproveedor"
+                                                    th:value="${proveedor.id_proveedor}" />
                                                 <div class="top-actions">
                                                     <button type="submit"
                                                         onclick="return confirm('¿Estás seguro de que deseas eliminar este proveedor?')">
@@ -447,6 +449,19 @@
                                                 </div>
                                             </form>
                                         </td>
+                                        <td>
+                                            <div class="top-actions">
+                                                <button id="openModalBtn" onclick="openEditModal(
+                        '[[${proveedor.id_proveedor}]]',
+                        '[[${proveedor.nombre_empresa}]]', 
+                        '[[${proveedor.contacto_principal}]]', 
+                        '[[${proveedor.telefono}]]',
+                        '[[${proveedor.email}]]',
+                        '[[${proveedor.direccion}]]'
+                    )">Editar Proveedor</button>
+                                            </div>
+                                        </td>
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -455,11 +470,40 @@
                 </div>
         </main>
     </div>
+    <div id="productModalAgregar" class="modal">
+        <div class="modal-content">
+            <span class="closeAgregar">&times;</span>
+            <h2>Añadir Proveedor</h2>
+            <form method="post" action="/insertProveedor">
+                <label>Nombre de la Empresa:<br>
+                    <input type="text" id="nombreempresa" name="nombre_empresa" placeholder="Ej. Compumax" required>
+                </label><br>
+                <label>Contacto Principal::<br>
+                    <input type="text" id="ContactoPrincipal" name="contacto_principal" placeholder="Ej. Kevin Junior"
+                        required>
+                </label><br>
+                <label>Telefono:<br>
+                    <input type="text" id="Telefono" name="telefono" placeholder="Ej. 3012345678" required>
+                </label><br>
+                <label>Correo Electrónico:<br>
+                    <input type="email" id="Correo" name="email" placeholder="Ej. Kevin Junior" required>
+                </label><br>
+                <label>Dirección:<br>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123" required>
+                </label><br>
+                <div class="top-actions">
+                    <button type="submit">Guardar</button>
+                    <button type="button"
+                        onclick="document.getElementById('productModalAgregar').classList.remove('show')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="productModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Añadir Proveedor</h2>
-            <form method="post" action="/insertProveedor">
+            <h2>Editar Proveedor</h2>
+            <form method="post" action="/editProveedor">
                 <label>Nombre de la Empresa:<br>
                     <input type="text" id="nombreempresa" name="nombre_empresa" placeholder="Ej. Compumax" required>
                 </label><br>
@@ -508,6 +552,10 @@
         const openBtn = document.getElementById("openModalBtn");
         const closeBtn = document.querySelector(".close");
 
+        const modalAgregar = document.getElementById("productModalAgregar");
+        const openBtnAgregar = document.getElementById("openModalBtnAgregar");
+        const closeBtnAgregar = document.querySelector(".closeAgregar");
+
         // Mostrar modal al hacer clic en el botón
         openBtn.onclick = () => {
             modal.classList.add("show");
@@ -522,6 +570,22 @@
         window.onclick = (event) => {
             if (event.target === modal) {
                 modal.classList.remove("show");
+            }
+        };
+
+        openBtnAgregar.onclick = () => {
+            modalAgregar.classList.add("show");
+        };
+
+        // Ocultar modal al hacer clic en la X
+        closeBtnAgregar.onclick = () => {
+            modalAgregar.classList.remove("show");
+        };
+
+        // Ocultar modal al hacer clic fuera del contenido
+        window.onclick = (event) => {
+            if (event.target === modalAgregar) {
+                modalAgregar.classList.remove("show");
             }
         };
     </script>

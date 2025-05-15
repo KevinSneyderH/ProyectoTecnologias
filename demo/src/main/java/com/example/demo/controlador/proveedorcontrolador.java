@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class proveedorcontrolador {
@@ -48,12 +49,22 @@ public class proveedorcontrolador {
         return "proveedores";
     }
 
-    @PostMapping("/eliminarproveedor/{id_proveedor}")
-    public String eliminarProveedor(@PathVariable int id_proveedor) {
+    @PostMapping("/deleteProveedor")
+    public String eliminarProducto(@RequestParam int idproveedor) {
         try {
-            proveedorservicio.deleteById(id_proveedor);
+            proveedorservicio.deleteById(idproveedor);
         } catch (Exception e) {
             System.out.println("Error: " + e);
+        }
+        return "redirect:/Proveedores";
+    }
+
+    @PostMapping("/editProveedor") // agregar base de datos
+    public String updateProveedor(@Validated proveedorenty objProvedor) {
+        try {
+            proveedorservicio.save(objProvedor);
+        } catch (Exception e) {
+            System.out.println("Error insetar proveedor: " + e.getMessage());
         }
         return "redirect:/Proveedores";
     }
