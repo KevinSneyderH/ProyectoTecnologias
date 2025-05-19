@@ -451,14 +451,14 @@
                                         </td>
                                         <td>
                                             <div class="top-actions">
-                                                <button id="openModalBtn" onclick="openEditModal(
-                        '[[${proveedor.id_proveedor}]]',
-                        '[[${proveedor.nombre_empresa}]]', 
-                        '[[${proveedor.contacto_principal}]]', 
-                        '[[${proveedor.telefono}]]',
-                        '[[${proveedor.email}]]',
-                        '[[${proveedor.direccion}]]'
-                    )">Editar Proveedor</button>
+                                                <button type="button" class="edit-btn" th:attr="data-id=${proveedor.id_proveedor},
+             data-nombre=${proveedor.nombre_empresa},
+             data-contacto=${proveedor.contacto_principal},
+             data-telefono=${proveedor.telefono},
+             data-email=${proveedor.email},
+             data-direccion=${proveedor.direccion}">
+                                                    Editar Proveedor
+                                                </button>
                                             </div>
                                         </td>
 
@@ -503,22 +503,23 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Editar Proveedor</h2>
+            <!-- Modal Editar Proveedor -->
             <form method="post" action="/editProveedor">
+                <input type="hidden" id="idProveedorEdit" name="id_proveedor">
                 <label>Nombre de la Empresa:<br>
-                    <input type="text" id="nombreempresa" name="nombre_empresa" placeholder="Ej. Compumax" required>
+                    <input type="text" id="nombreempresaEdit" name="nombre_empresa" required>
                 </label><br>
-                <label>Contacto Principal::<br>
-                    <input type="text" id="ContactoPrincipal" name="contacto_principal" placeholder="Ej. Kevin Junior"
-                        required>
+                <label>Contacto Principal:<br>
+                    <input type="text" id="ContactoPrincipalEdit" name="contacto_principal" required>
                 </label><br>
                 <label>Telefono:<br>
-                    <input type="text" id="Telefono" name="telefono" placeholder="Ej. 3012345678" required>
+                    <input type="text" id="TelefonoEdit" name="telefono" required>
                 </label><br>
                 <label>Correo Electrónico:<br>
-                    <input type="email" id="Correo" name="email" placeholder="Ej. Kevin Junior" required>
+                    <input type="email" id="CorreoEdit" name="email" required>
                 </label><br>
                 <label>Dirección:<br>
-                    <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123" required>
+                    <input type="text" id="direccionEdit" name="direccion" required>
                 </label><br>
                 <div class="top-actions">
                     <button type="submit">Guardar</button>
@@ -547,6 +548,8 @@
             });
         });
 
+        // ...código existente...
+
         // Referencias a elementos
         const modal = document.getElementById("productModal");
         const openBtn = document.getElementById("openModalBtn");
@@ -556,38 +559,47 @@
         const openBtnAgregar = document.getElementById("openModalBtnAgregar");
         const closeBtnAgregar = document.querySelector(".closeAgregar");
 
-        // Mostrar modal al hacer clic en el botón
-        openBtn.onclick = () => {
-            modal.classList.add("show");
-        };
+        // Mostrar modal agregar
+        if (openBtnAgregar) {
+            openBtnAgregar.onclick = () => {
+                modalAgregar.classList.add("show");
+            };
+        }
+        if (closeBtnAgregar) {
+            closeBtnAgregar.onclick = () => {
+                modalAgregar.classList.remove("show");
+            };
+        }
 
-        // Ocultar modal al hacer clic en la X
-        closeBtn.onclick = () => {
-            modal.classList.remove("show");
-        };
+        // Mostrar modal editar (se abre solo desde los botones de la tabla)
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                modal.classList.remove("show");
+            };
+        }
 
-        // Ocultar modal al hacer clic fuera del contenido
+        // Ocultar modales al hacer clic fuera del contenido
         window.onclick = (event) => {
             if (event.target === modal) {
                 modal.classList.remove("show");
             }
-        };
-
-        openBtnAgregar.onclick = () => {
-            modalAgregar.classList.add("show");
-        };
-
-        // Ocultar modal al hacer clic en la X
-        closeBtnAgregar.onclick = () => {
-            modalAgregar.classList.remove("show");
-        };
-
-        // Ocultar modal al hacer clic fuera del contenido
-        window.onclick = (event) => {
             if (event.target === modalAgregar) {
                 modalAgregar.classList.remove("show");
             }
         };
+
+        // Llenar el modal de edición con los datos correctos
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('idProveedorEdit').value = this.getAttribute('data-id');
+                document.getElementById('nombreempresaEdit').value = this.getAttribute('data-nombre');
+                document.getElementById('ContactoPrincipalEdit').value = this.getAttribute('data-contacto');
+                document.getElementById('TelefonoEdit').value = this.getAttribute('data-telefono');
+                document.getElementById('CorreoEdit').value = this.getAttribute('data-email');
+                document.getElementById('direccionEdit').value = this.getAttribute('data-direccion');
+                modal.classList.add('show');
+            });
+        });
     </script>
 </body>
 

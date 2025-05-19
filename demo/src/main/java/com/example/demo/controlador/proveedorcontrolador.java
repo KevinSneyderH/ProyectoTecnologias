@@ -59,12 +59,26 @@ public class proveedorcontrolador {
         return "redirect:/Proveedores";
     }
 
-    @PostMapping("/editProveedor") // agregar base de datos
-    public String updateProveedor(@Validated proveedorenty objProvedor) {
+    @PostMapping("/editProveedor")
+    public String editarProveedor(
+            @RequestParam int id_proveedor,
+            @RequestParam String nombre_empresa,
+            @RequestParam String contacto_principal,
+            @RequestParam String telefono,
+            @RequestParam String email,
+            @RequestParam String direccion) {
         try {
-            proveedorservicio.save(objProvedor);
+            proveedorenty proveedor = proveedorservicio.findById(id_proveedor).orElse(null);
+            if (proveedor != null) {
+                proveedor.setNombre_empresa(nombre_empresa);
+                proveedor.setContacto_principal(contacto_principal);
+                proveedor.setTelefono(telefono);
+                proveedor.setEmail(email);
+                proveedor.setDireccion(direccion);
+                proveedorservicio.save(proveedor);
+            }
         } catch (Exception e) {
-            System.out.println("Error insetar proveedor: " + e.getMessage());
+            System.out.println("Error al editar proveedor: " + e.getMessage());
         }
         return "redirect:/Proveedores";
     }

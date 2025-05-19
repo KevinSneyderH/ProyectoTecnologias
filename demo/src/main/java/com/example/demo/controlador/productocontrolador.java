@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.example.demo.entidad.productoenty;
+import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.productorepositorio;
@@ -60,6 +61,28 @@ public class productocontrolador {
             productoservicio.deleteById(idproducto);
         } catch (Exception e) {
             System.out.println("Error: " + e);
+        }
+        return "redirect:/Productos";
+    }
+
+    @PostMapping("/editProducto")
+    public String editarProducto(
+            @RequestParam int id_producto,
+            @RequestParam String nombre,
+            @RequestParam int cantidad_en_stock,
+            @RequestParam double precio_venta_unitario,
+            @RequestParam String url_imagen) {
+        try {
+            productoenty producto = productoservicio.findById(id_producto).orElse(null);
+            if (producto != null) {
+                producto.setNombre(nombre);
+                producto.setCantidad_en_stock(cantidad_en_stock);
+                producto.setPrecio_venta_unitario(precio_venta_unitario);
+                producto.setUrl_imagen(url_imagen);
+                productoservicio.save(producto);
+            }
+        } catch (Exception e) {
+            System.out.println("Error al editar producto: " + e.getMessage());
         }
         return "redirect:/Productos";
     }
