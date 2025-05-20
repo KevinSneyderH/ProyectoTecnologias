@@ -1,5 +1,6 @@
 package com.example.demo.controlador;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -116,12 +116,19 @@ public class pedidocontrolador {
         return response;
     }
 
-    @PostMapping("/Pedidos/{id}/agregar-productos")
-    public String agregarProductoAlPedido(@PathVariable("id") int idPedido, @ModelAttribute detallePedido detalle) {
-        pedidoenty pedido = pedidoservicio.findById(idPedido).orElseThrow();
-        detalle.setIdPedido(pedido);
-        detallepedidorepositorio.save(detalle);
-        return "redirect:/Pedidos/" + idPedido + "/agregar-productos";
+    @GetMapping("/api/pedidos/{id}/detalles")
+    @ResponseBody
+    public List<Map<String, Object>> getDetallesPedido(@PathVariable("id") int idPedido) {
+        List<detallePedido> detalles = detallepedidorepositorio.findByPedidoId(idPedido);
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (detallePedido d : detalles) {
+            Map<String, Object> det = new HashMap<>();
+            det.put("productoNombre", d.getIdProducto().getNombre());
+            det.put("cantidadSolicitada", d.getCantidadSolicitada());
+            det.put("subtotal", d.getPrecioTotalCompra());
+            response.add(det);
+        }
+        return response;
     }
 
-}// fin
+}

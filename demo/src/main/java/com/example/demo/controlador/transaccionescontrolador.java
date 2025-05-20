@@ -31,7 +31,6 @@ public class transaccionescontrolador {
 
         List<detallecompra> compras = detalleCompraService.findAll();
         List<detallePedido> pedidos = detallePedidoService.findAll();
-
         List<Map<String, Object>> transacciones = new ArrayList<>();
 
         // Procesar compras

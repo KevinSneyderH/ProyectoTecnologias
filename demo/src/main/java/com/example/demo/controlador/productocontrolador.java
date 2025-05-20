@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.example.demo.entidad.productoenty;
-import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.productorepositorio;
