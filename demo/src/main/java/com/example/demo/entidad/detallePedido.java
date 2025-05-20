@@ -2,6 +2,8 @@ package com.example.demo.entidad;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -10,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 public class detallePedido {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_detalle_pedido")
     private int id;
 
@@ -39,6 +42,13 @@ public class detallePedido {
         this.cantidadSolicitada = cantidadSolicitada;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getCantidadSolicitada() {
+        return cantidadSolicitada;
+    }
 
     public double getPrecioTotalCompra() {
         return precioTotalCompra;

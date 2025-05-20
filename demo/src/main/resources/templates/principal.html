@@ -204,7 +204,7 @@
             <button onclick="location.href='/Productos'" class="nav-button">Productos</button>
             <button onclick="location.href='/Proveedores'" class="nav-button">Proveedores</button>
             <button onclick="location.href='/Pedidos'" class="nav-button">Pedidos</button>
-            <button class="nav-button">Transacciones</button>
+            <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
             <button class="nav-button">Informes</button>
         </aside>
         <main>
@@ -223,16 +223,24 @@
                                     <th>Fecha</th>
                                     <th>Tipo</th>
                                     <th>Cantidad</th>
-                                    <th>Costo Unitario</th>
+                                    <th>Costo Transacción</th>
                                     <th>Producto</th>
                                     <th>Usuario</th>
-                                    <th>Observaciones</th>
+
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr th:each="transaccion : ${transacciones}">
+                                    <td th:text="${transaccion.fecha}">-</td>
+                                    <td th:text="${transaccion.tipo}">-</td>
+                                    <td th:text="${transaccion.cantidad}">-</td>
+                                    <td th:text="${transaccion.costoUnitario}">-</td>
+                                    <td th:text="${transaccion.producto}">-</td>
+                                    <td th:text="${transaccion.usuario}">-</td>
 
-
+                                </tr>
                             </tbody>
+
                         </table>
                     </div>
                 </div>

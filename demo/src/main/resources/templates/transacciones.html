@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Proveedores</title>
+    <title>Panel Pedidos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -215,148 +215,6 @@
         }
 
 
-        /* Fondo del modal: oculto por defecto, full-screen fijo y semitransparente */
-        /* Modal Background */
-        /* Modal Background */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Clase para mostrar el modal */
-        .modal.show {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Modal Container */
-        .modal-content {
-            background-color: #e6f4ea;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 1rem;
-            width: 90%;
-            max-width: 500px;
-            transform: translateY(-30px);
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal.show .modal-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* Modal Title */
-        .modal-content h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Form Labels and Inputs */
-        .modal-content label {
-            display: block;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-
-        .modal-content input[type="text"],
-        .modal-content input[type="number"],
-        .modal-content input[type="url"],
-        .modal-content input[type="email"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Buttons */
-        .modal-content .top-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: space-between;
-            padding-top: 1rem;
-        }
-
-        .modal-content button[type="submit"],
-        .modal-content button[type="button"] {
-            flex: 1;
-            min-width: 120px;
-            background-color: #16a34a;
-            color: #ffffff;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-align: center;
-        }
-
-        .modal-content button[type="button"] {
-            background-color: #dc2626;
-        }
-
-        .modal-content button[type="submit"]:hover {
-            background-color: #15803d;
-        }
-
-        .modal-content button[type="button"]:hover {
-            background-color: #b91c1c;
-        }
-
-        /* Close Button */
-        .close {
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #000;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 640px) {
-            .modal-content {
-                padding: 1.5rem;
-            }
-
-            .modal-content h2 {
-                font-size: 1.5rem;
-            }
-
-            .modal-content button[type="submit"],
-            .modal-content button[type="button"] {
-                flex: 1 0 100%;
-                margin-bottom: 1rem;
-            }
-        }
-
-
-
-        /* Hacer responsive: ancho casi completo en pantallas pequeñas */
-        @media (max-width: 600px) {
-            .modal-content {
-                width: 90%;
-                margin: 10% auto;
-            }
-        }
-
 
         @media (max-width: 768px) {
             .container {
@@ -375,7 +233,7 @@
 
 <body>
     <header>
-        <h1>Proveedores</h1>
+        <h1>Pedidos</h1>
         <form action="/logout" method="post">
             <button class="logout-btn">Cerrar Sesión 🏡</button>
         </form>
@@ -393,9 +251,9 @@
 
             <button onclick="location.href='/Principal'" class="nav-button">Principal</button>
             <button onclick="location.href='/Productos'" class="nav-button">Productos</button>
-            <button class="nav-button active">Proveedores</button>
+            <button onclick="location.href='/Proveedores'" class="nav-button">Proveedores</button>
             <button onclick="location.href='/Pedidos'" class="nav-button">Pedidos</button>
-            <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
+            <button class="nav-button active">Transacciones</button>
             <button class="nav-button">Informes</button>
         </aside>
         <main>
@@ -403,204 +261,46 @@
 
             <div class="dashboard">
                 <div class="card">
-                    <div class="card">
-                        <div class="top-actions">
-                            <button id="openModalBtnAgregar">Agregar Proveedor</button>
+                    <h3>Transacciones</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Cantidad</th>
+                                    <th>Costo Transacción</th>
+                                    <th>Producto</th>
+                                    <th>Usuario</th>
 
-                        </div>
-                        <div class="center-search">
-                            <div class="search-container">
-                                <input id="searchInput" type="text" class="search-input"
-                                    placeholder="Buscar producto...">
-                                <button class="search-button">🔍 Buscar</button>
-                            </div>
-                        </div>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="transaccion : ${transacciones}">
+                                    <td th:text="${transaccion.fecha}">-</td>
+                                    <td th:text="${transaccion.tipo}">-</td>
+                                    <td th:text="${transaccion.cantidad}">-</td>
+                                    <td th:text="${transaccion.costoUnitario}">-</td>
+                                    <td th:text="${transaccion.producto}">-</td>
+                                    <td th:text="${transaccion.usuario}">-</td>
 
-                        <h3>Proveedores</h3>
-                        <div class="table-container">
-                            <table id="productTable">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Contacto Principal</th>
-                                        <th>Teléfono</th>
-                                        <th>Email</th>
-                                        <th>Dirección</th>
-                                        <th>Eliminar</th>
-                                        <th>Editar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="proveedor : ${listaProveedor}">
-                                        <td th:text="${proveedor.nombre_empresa}"></td>
-                                        <td th:text="${proveedor.contacto_principal}"></td>
-                                        <td th:text="${proveedor.telefono}"></td>
-                                        <td th:text="${proveedor.email}"></td>
-                                        <td th:text="${proveedor.direccion}"></td>
-                                        <td>
-                                            <form th:action="@{/deleteProveedor}" method="post">
-                                                <input type="hidden" name="idproveedor"
-                                                    th:value="${proveedor.id_proveedor}" />
-                                                <div class="top-actions">
-                                                    <button type="submit"
-                                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este proveedor?')">
-                                                        Eliminar
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="top-actions">
-                                                <button type="button" class="edit-btn" th:attr="data-id=${proveedor.id_proveedor},
-             data-nombre=${proveedor.nombre_empresa},
-             data-contacto=${proveedor.contacto_principal},
-             data-telefono=${proveedor.telefono},
-             data-email=${proveedor.email},
-             data-direccion=${proveedor.direccion}">
-                                                    Editar Proveedor
-                                                </button>
-                                            </div>
-                                        </td>
+                                </tr>
+                            </tbody>
 
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        </table>
                     </div>
                 </div>
+            </div>
         </main>
-    </div>
-    <div id="productModalAgregar" class="modal">
-        <div class="modal-content">
-            <span class="closeAgregar">&times;</span>
-            <h2>Añadir Proveedor</h2>
-            <form method="post" action="/insertProveedor">
-                <label>Nombre de la Empresa:<br>
-                    <input type="text" id="nombreempresa" name="nombre_empresa" placeholder="Ej. Compumax" required>
-                </label><br>
-                <label>Contacto Principal::<br>
-                    <input type="text" id="ContactoPrincipal" name="contacto_principal" placeholder="Ej. Kevin Junior"
-                        required>
-                </label><br>
-                <label>Telefono:<br>
-                    <input type="text" id="Telefono" name="telefono" placeholder="Ej. 3012345678" required>
-                </label><br>
-                <label>Correo Electrónico:<br>
-                    <input type="email" id="Correo" name="email" placeholder="Ej. Kevin Junior" required>
-                </label><br>
-                <label>Dirección:<br>
-                    <input type="text" id="direccion" name="direccion" placeholder="Ej. Calle 123" required>
-                </label><br>
-                <div class="top-actions">
-                    <button type="submit">Guardar</button>
-                    <button type="button"
-                        onclick="document.getElementById('productModalAgregar').classList.remove('show')">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Editar Proveedor</h2>
-            <!-- Modal Editar Proveedor -->
-            <form method="post" action="/editProveedor">
-                <input type="hidden" id="idProveedorEdit" name="id_proveedor">
-                <label>Nombre de la Empresa:<br>
-                    <input type="text" id="nombreempresaEdit" name="nombre_empresa" required>
-                </label><br>
-                <label>Contacto Principal:<br>
-                    <input type="text" id="ContactoPrincipalEdit" name="contacto_principal" required>
-                </label><br>
-                <label>Teléfono:<br>
-                    <input type="text" id="TelefonoEdit" name="telefono" required>
-                </label><br>
-                <label>Correo Electrónico:<br>
-                    <input type="email" id="CorreoEdit" name="email" required>
-                </label><br>
-                <label>Dirección:<br>
-                    <input type="text" id="direccionEdit" name="direccion" required>
-                </label><br>
-                <div class="top-actions">
-                    <button type="submit">Guardar</button>
-                    <button type="button"
-                        onclick="document.getElementById('productModal').classList.remove('show')">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('searchInput');
-            input.addEventListener('input', () => {
-                const filter = input.value.toLowerCase();
-                const rows = document.querySelectorAll('#productTable tbody tr');
-
-                rows.forEach(row => {
-                    const productName = row.querySelector('td')?.textContent.toLowerCase() || '';
-                    row.style.display = productName.includes(filter) ? '' : 'none';
-                });
-            });
-        });
-
-        // ...código existente...
-
-        // Referencias a elementos
-        const modal = document.getElementById("productModal");
-        const openBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.querySelector(".close");
-
-        const modalAgregar = document.getElementById("productModalAgregar");
-        const openBtnAgregar = document.getElementById("openModalBtnAgregar");
-        const closeBtnAgregar = document.querySelector(".closeAgregar");
-
-        // Mostrar modal agregar
-        if (openBtnAgregar) {
-            openBtnAgregar.onclick = () => {
-                modalAgregar.classList.add("show");
-            };
-        }
-        if (closeBtnAgregar) {
-            closeBtnAgregar.onclick = () => {
-                modalAgregar.classList.remove("show");
-            };
-        }
-
-        // Mostrar modal editar (se abre solo desde los botones de la tabla)
-        if (closeBtn) {
-            closeBtn.onclick = () => {
-                modal.classList.remove("show");
-            };
-        }
-
-        // Ocultar modales al hacer clic fuera del contenido
-        window.onclick = (event) => {
-            if (event.target === modal) {
-                modal.classList.remove("show");
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('hidden');
             }
-            if (event.target === modalAgregar) {
-                modalAgregar.classList.remove("show");
-            }
-        };
 
-        // Llenar el modal de edición con los datos correctos
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.getElementById('idProveedorEdit').value = this.getAttribute('data-id');
-                document.getElementById('nombreempresaEdit').value = this.getAttribute('data-nombre');
-                document.getElementById('ContactoPrincipalEdit').value = this.getAttribute('data-contacto');
-                document.getElementById('TelefonoEdit').value = this.getAttribute('data-telefono');
-                document.getElementById('CorreoEdit').value = this.getAttribute('data-email');
-                document.getElementById('direccionEdit').value = this.getAttribute('data-direccion');
-                modal.classList.add('show');
-            });
-        });
-    </script>
+
+        </script>
 </body>
 
 </html>

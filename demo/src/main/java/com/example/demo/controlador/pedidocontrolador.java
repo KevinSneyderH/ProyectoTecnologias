@@ -1,19 +1,29 @@
 package com.example.demo.controlador;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.example.demo.entidad.detallePedido;
 import com.example.demo.entidad.pedidoenty;
+import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallepedidorepositorio;
+import com.example.demo.repositorio.pedidorepositorio;
+import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class pedidocontrolador {
@@ -22,7 +32,13 @@ public class pedidocontrolador {
     public usuariorepositorio usuarioservicio;
 
     @Autowired
-    public detallepedidorepositorio detallepedidoservicio;
+    public pedidorepositorio pedidoservicio;
+
+    @Autowired
+    public productorepositorio productoservicio;
+
+    @Autowired
+    public detallepedidorepositorio detallepedidorepositorio;
 
     @GetMapping("/Pedidos")
     public String mostrarPaginaProductos(Model model, HttpServletResponse response, Authentication authentication) {
@@ -39,37 +55,53 @@ public class pedidocontrolador {
         model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
         model.addAttribute("rolUsuario", usuario.getRol());
 
-        List<detallePedido> listaPedidos = detallepedidoservicio.findAll(); // recupera todos los usuarios
-        model.addAttribute("listaPedidos", listaPedidos); // añade la lista de usuarios a la vista
+        // Ejemplo en tu controlador
+        List<pedidoenty> pedidos = pedidoservicio.findAll();
+        model.addAttribute("pedidos", pedidos);
 
-        for (int i = 0; i < listaPedidos.size(); i++) {
+        List<productoenty> productos = productoservicio.findAll();
+        model.addAttribute("productos", productos);
 
-            System.out.println(listaPedidos.get(i).getIdPedido().getId_pedido());
-        }
         return "pedidos";
     }
 
-    @PostMapping("/insertped") // agregar base de datos
-    public String inserpedido(@Validated pedidoenty objPedido) {
-        try {
-            detallepedidoservicio.save(objPedido);
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
+    @PostMapping("/insertped")
+    @ResponseBody
+    public Map<String, Object> inserpedido(
+            @RequestParam("productoIds") List<Integer> productoIds,
+            @RequestParam("cantidades") List<Integer> cantidades,
+            Authentication authentication) {
+        String nombreUsuario = authentication.getName();
+        usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
+        pedidoenty pedido = new pedidoenty();
+        pedido.setIdUsuario(usuario);
+        pedido.setFechaCreacion(java.sql.Date.valueOf(java.time.LocalDate.now()));
+        pedido.setEstadopedido("Pendiente");
+        pedido = pedidoservicio.save(pedido);
+
+        for (int i = 0; i < productoIds.size(); i++) {
+            int cantidad = cantidades.get(i);
+            if (cantidad > 0) {
+                detallePedido detalle = new detallePedido();
+                detalle.setIdPedido(pedido);
+                detalle.setIdProducto(productoservicio.findById(productoIds.get(i)).orElseThrow());
+                detalle.setCantidadSolicitada(cantidad);
+                detallepedidorepositorio.save(detalle);
+            }
         }
-        return "redirect:/Pedidos";
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id_pedido", pedido.getId_pedido());
+        response.put("success", true);
+        return response;
     }
 
-    @GetMapping("/Pedidoss")
-    public String listarPedidos(Model model) {
-        try {
-
-            List<detallePedido> listaPedidos = detallepedidoservicio.findAll();
-            model.addAttribute("listaPedidos", listaPedidos);
-
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
-        return "pedidos";
+    @PostMapping("/Pedidos/{id}/agregar-productos")
+    public String agregarProductoAlPedido(@PathVariable("id") int idPedido, @ModelAttribute detallePedido detalle) {
+        pedidoenty pedido = pedidoservicio.findById(idPedido).orElseThrow();
+        detalle.setIdPedido(pedido);
+        detallepedidorepositorio.save(detalle);
+        return "redirect:/Pedidos/" + idPedido + "/agregar-productos";
     }
 
 }// fin

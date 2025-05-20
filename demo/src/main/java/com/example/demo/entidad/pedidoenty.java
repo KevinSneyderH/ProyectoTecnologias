@@ -1,6 +1,7 @@
 package com.example.demo.entidad;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,10 +19,7 @@ public class pedidoenty {
     private int id_pedido;
 
     @Column(name = "fecha_creacion")
-    private Date fechaCreacion;
-
-    @Column(name = "fecha_entrega_estimada")
-    private Date fechaentrega_estimada;
+    private Date fechaCreacion = Date.valueOf(LocalDate.now());
 
     @Column(name = "estado_pedido")
     private String estadopedido;
@@ -50,14 +48,6 @@ public class pedidoenty {
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-
-    public Date getFechaentrega_estimada() {
-        return fechaentrega_estimada;
-    }
-
-    public void setFechaentrega_estimada(Date fechaentrega_estimada) {
-        this.fechaentrega_estimada = fechaentrega_estimada;
     }
 
     public String getEstadopedido() {

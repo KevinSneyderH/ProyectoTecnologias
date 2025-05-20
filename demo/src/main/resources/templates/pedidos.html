@@ -214,7 +214,143 @@
             background-color: #0f363d;
         }
 
+        /* Modal Background */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
+        /* Clase para mostrar el modal */
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Modal Container */
+        .modal-content {
+            background-color: #e6f4ea;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-30px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal Title */
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Labels and Inputs */
+        .modal-content label {
+            display: block;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="date"],
+        .modal-content input[type="url"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
+        .modal-content .top-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            padding-top: 1rem;
+        }
+
+        .modal-content button[type="submit"],
+        .modal-content button[type="button"] {
+            flex: 1;
+            min-width: 120px;
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .modal-content button[type="button"] {
+            background-color: #dc2626;
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background-color: #15803d;
+        }
+
+        .modal-content button[type="button"]:hover {
+            background-color: #b91c1c;
+        }
+
+        /* Close Button */
+        .closePedido {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .closePedido:hover {
+            color: #000;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-content button[type="submit"],
+            .modal-content button[type="button"] {
+                flex: 1 0 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* Hacer responsive: ancho casi completo en pantallas pequeñas */
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 90%;
+                margin: 10% auto;
+            }
+        }
 
         @media (max-width: 768px) {
             .container {
@@ -253,7 +389,7 @@
             <button onclick="location.href='/Productos'" class="nav-button">Productos</button>
             <button onclick="location.href='/Proveedores'" class="nav-button">Proveedores</button>
             <button class="nav-button active">Pedidos</button>
-            <button class="nav-button">Transacciones</button>
+            <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
             <button class="nav-button">Informes</button>
         </aside>
         <main>
@@ -263,7 +399,7 @@
                 <div class="card">
                     <div class="card">
                         <div class="top-actions">
-                            <button>Editar Pedido</button>
+                            <button id="openModalBtnPedido">Crear Pedido</button>
                         </div>
                         <div class="center-search">
                             <div class="search-container">
@@ -278,19 +414,18 @@
                                     <tr>
                                         <th>Numero de Pedido</th>
                                         <th>Fecha Creacion</th>
-                                        <th>Fecha Estimada</th>
                                         <th>Costo Total</th>
                                         <th>Estado</th>
+                                        <th>Usuario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="pedido : ${listaPedidos}">
-                                        <th th:text="${pedido.idPedido.id_pedido}"></th>
-                                        <th th:text="${pedido.idPedido.fechaCreacion}"></th>
-                                        <th th:text="${pedido.idPedido.fechaentrega_estimada}"></th>
-                                        <th th:text="${pedido.idPedido.costototal}"></th>
-                                        <th th:text="${pedido.idPedido.estadopedido}"></th>
-
+                                    <tr th:each="pedido : ${pedidos}">
+                                        <td th:text="${pedido.id_pedido}">-</td>
+                                        <td th:text="${pedido.fechaCreacion}">-</td>
+                                        <td th:text="${pedido.costototal}">-</td>
+                                        <td th:text="${pedido.estadopedido}">-</td>
+                                        <td th:text="${pedido.idUsuario.nombreUsuario}">-</td>
                                     </tr>
                                 </tbody>
 
@@ -298,16 +433,128 @@
                         </div>
                     </div>
                 </div>
-        </main>
-    </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        }
+                <!-- Modal para crear pedido -->
+                <div id="pedidoModal" class="modal">
+                    <div class="modal-content">
+                        <span class="closePedido" style="cursor:pointer;">&times;</span>
+                        <h2>Crear pedido</h2>
+                        <form id="crearPedidoForm">
+                            <input type="text" placeholder="Buscar producto..." id="buscarProducto">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio unidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="prod : ${productos}">
+                                        <td th:text="${prod.nombre}"></td>
+                                        <td>
+                                            <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
+                                            <input type="number" min="0" name="cantidades"
+                                                th:data-precio-unitario="${prod.precio_venta_unitario}" value="0"
+                                                class="cantidad-input">
+                                        </td>
+                                        <td th:text="${prod.precio_venta_unitario}"></td>
+                                        <td class="subtotal-cell">$0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                                <strong>Total: $<span id="totalPedido">0</span></strong>
+                            </div>
+                            <div class="top-actions">
+                                <button type="button" id="cancelPedidoBtn">Cancelar</button>
+                                <button type="submit">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    // Modal Crear Pedido
+                    const openBtnPedido = document.getElementById("openModalBtnPedido");
+                    const modalPedido = document.getElementById("pedidoModal");
+                    const closeBtnPedido = document.querySelector(".closePedido");
+                    const cancelPedidoBtn = document.getElementById("cancelPedidoBtn");
 
+                    // Modal Agregar Producto
+                    const modalAgregarProducto = document.getElementById("agregarProductoModal");
+                    const closeBtnAgregarProducto = document.querySelector(".closeAgregarProducto");
+                    const cancelAgregarProductoBtn = document.getElementById("cancelAgregarProductoBtn");
 
-    </script>
+                    // Abrir modal crear pedido
+                    if (openBtnPedido) openBtnPedido.onclick = () => modalPedido.classList.add("show");
+                    if (closeBtnPedido) closeBtnPedido.onclick = () => modalPedido.classList.remove("show");
+                    if (cancelPedidoBtn) cancelPedidoBtn.onclick = () => modalPedido.classList.remove("show");
+
+                    // Abrir modal agregar producto (solo manualmente o después de crear pedido)
+                    if (closeBtnAgregarProducto) closeBtnAgregarProducto.onclick = () => modalAgregarProducto.classList.remove("show");
+                    if (cancelAgregarProductoBtn) cancelAgregarProductoBtn.onclick = () => modalAgregarProducto.classList.remove("show");
+
+                    // Cerrar modales al hacer clic fuera
+                    window.onclick = (event) => {
+                        if (event.target === modalPedido) modalPedido.classList.remove("show");
+                        if (event.target === modalAgregarProducto) modalAgregarProducto.classList.remove("show");
+                    };
+
+                    // Manejar el flujo: al crear pedido, abrir modal agregar producto
+                    document.getElementById("crearPedidoForm").onsubmit = function (e) {
+                        e.preventDefault();
+                        const form = e.target;
+                        fetch('/insertped', {
+                            method: 'POST',
+                            body: new FormData(form)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                modalPedido.classList.remove("show");
+                                // Aquí puedes guardar el id del pedido creado en un campo oculto o variable JS
+                                // y usarlo para asociar los productos al pedido
+                                // Por ejemplo:
+                                document.getElementById("agregarProductoForm").dataset.pedidoId = data.id_pedido;
+                                modalAgregarProducto.classList.add("show");
+                            })
+                            .catch(err => alert("Error al crear pedido"));
+                    };
+
+                    // Cuando envíes el formulario de agregar producto, usa el id del pedido guardado
+                    document.getElementById("agregarProductoForm").onsubmit = function (e) {
+                        e.preventDefault();
+                        const form = e.target;
+                        const pedidoId = form.dataset.pedidoId;
+                        const action = `/Pedidos/${pedidoId}/agregar-productos`;
+                        fetch(action, {
+                            method: 'POST',
+                            body: new FormData(form)
+                        })
+                            .then(() => {
+                                modalAgregarProducto.classList.remove("show");
+                                // Aquí podrías actualizar la tabla de productos del pedido, etc.
+                            })
+                            .catch(err => alert("Error al agregar producto"));
+                    };
+                </script>
+                <script>
+                    // Actualiza subtotales y total al cambiar cantidades
+                    document.querySelectorAll('.cantidad-input').forEach(input => {
+                        input.addEventListener('input', actualizarTotales);
+                    });
+
+                    function actualizarTotales() {
+                        let total = 0;
+                        document.querySelectorAll('.cantidad-input').forEach((input, idx) => {
+                            const precio = parseFloat(input.dataset.precioUnitario);
+                            const cantidad = parseInt(input.value) || 0;
+                            const subtotal = precio * cantidad;
+                            input.closest('tr').querySelector('.subtotal-cell').textContent = '$' + subtotal.toFixed(2);
+                            total += subtotal;
+                        });
+                        document.getElementById('totalPedido').textContent = total.toFixed(2);
+                    }
+                </script>
 </body>
 
 </html>
