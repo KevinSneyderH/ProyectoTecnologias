@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-05-2025 a las 16:21:43
+-- Tiempo de generación: 20-05-2025 a las 05:12:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,17 +32,17 @@ CREATE TABLE `detallecompra` (
   `id_proveedor` int(11) NOT NULL,
   `idproducto` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
-  `precio_compra_proveedor` decimal(10,2) NOT NULL
+  `precio_compra_proveedor` decimal(10,2) NOT NULL,
+  `FechaCompra` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `detallecompra`
 --
 
-INSERT INTO `detallecompra` (`id`, `id_proveedor`, `idproducto`, `cantidad`, `precio_compra_proveedor`) VALUES
-(8, 7, 3, 40, 110.00),
-(9, 4, 4, 150, 14.00),
-(13, 3, 3, 20, 120.00);
+INSERT INTO `detallecompra` (`id`, `id_proveedor`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `FechaCompra`) VALUES
+(9, 4, 4, 150, 14.00, '2025-05-19'),
+(13, 3, 3, 20, 120.00, '2025-05-19');
 
 --
 -- Disparadores `detallecompra`
@@ -75,111 +75,23 @@ CREATE TABLE `detallepedido` (
 --
 
 INSERT INTO `detallepedido` (`id_detalle_pedido`, `cantidad_solicitada`, `subtotal`, `id_pedido`, `id_producto`) VALUES
-(2, 5, 250.00, 1, 2),
 (3, 3, 600.00, 2, 3),
 (4, 15, 225.00, 2, 4),
-(7, 6, 183.00, 4, 2),
-(8, 1, 120.00, 4, 3),
+(8, 1, 200.00, 4, 3),
 (9, 20, 300.00, 5, 4),
-(12, 1, 50.00, 8, 2),
-(13, 5, 600.00, 8, 3);
-
---
--- Disparadores `detallepedido`
---
-DELIMITER $$
-CREATE TRIGGER `actualizar_costo_total_pedido` AFTER INSERT ON `detallepedido` FOR EACH ROW BEGIN
-    DECLARE nuevo_total DECIMAL(10,2);
-    
-    -- Sumar todos los subtotales del pedido relacionado
-    SELECT COALESCE(SUM(subtotal), 0) INTO nuevo_total
-    FROM detallepedido
-    WHERE id_pedido = NEW.id_pedido;
-    
-    -- Actualizar el costo total del pedido
-    UPDATE pedidoenty
-    SET costo_total = nuevo_total
-    WHERE id_pedido = NEW.id_pedido;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `actualizar_costo_total_pedido_delete` AFTER DELETE ON `detallepedido` FOR EACH ROW BEGIN
-    DECLARE nuevo_total DECIMAL(10,2);
-    
-    -- Sumar todos los subtotales del pedido relacionado
-    SELECT COALESCE(SUM(subtotal), 0) INTO nuevo_total
-    FROM detallepedido
-    WHERE id_pedido = OLD.id_pedido;
-    
-    -- Actualizar el costo total del pedido
-    UPDATE pedidoenty
-    SET costo_total = nuevo_total
-    WHERE id_pedido = OLD.id_pedido;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `actualizar_costo_total_pedido_update` AFTER UPDATE ON `detallepedido` FOR EACH ROW BEGIN
-    DECLARE nuevo_total DECIMAL(10,2);
-    
-    -- Sumar todos los subtotales del pedido relacionado
-    SELECT COALESCE(SUM(subtotal), 0) INTO nuevo_total
-    FROM detallepedido
-    WHERE id_pedido = NEW.id_pedido;
-    
-    -- Actualizar el costo total del pedido
-    UPDATE pedidoenty
-    SET costo_total = nuevo_total
-    WHERE id_pedido = NEW.id_pedido;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `actualizar_subtotal_detalle` BEFORE UPDATE ON `detallepedido` FOR EACH ROW BEGIN
-    DECLARE precio_unitario DECIMAL(10,2);
-    
-    -- Obtener el precio unitario del producto relacionado
-    SELECT precio_venta_unitario INTO precio_unitario
-    FROM productoenty
-    WHERE id_producto = NEW.id_producto;
-    
-    -- Calcular el nuevo subtotal
-    SET NEW.subtotal = precio_unitario * NEW.cantidad_solicitada;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `calcular_subtotal` BEFORE INSERT ON `detallepedido` FOR EACH ROW BEGIN
-    DECLARE precio_unitario DECIMAL(10,2);
-    
-    -- Obtener el precio unitario del producto relacionado
-    SELECT precio_venta_unitario INTO precio_unitario
-    FROM productoenty
-    WHERE id_producto = NEW.id_producto;
-    
-    -- Calcular el subtotal
-    SET NEW.subtotal = precio_unitario * NEW.cantidad_solicitada;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `restaurar_cantidad_stock` AFTER DELETE ON `detallepedido` FOR EACH ROW BEGIN
-    -- Restaura el stock cuando se elimina un detalle de pedido
-    UPDATE productoenty
-    SET cantidad_en_stock = cantidad_en_stock + OLD.cantidad_solicitada
-    WHERE id_producto = OLD.id_producto;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `trg_actualizar_stock_producto` AFTER INSERT ON `detallepedido` FOR EACH ROW BEGIN
-    UPDATE productoenty
-    SET cantidad_en_stock = NEW.cantidad_solicitada - cantidad_en_stock 
-    WHERE id_producto = NEW.id_producto;
-END
-$$
-DELIMITER ;
+(13, 10, 300.00, 13, 4),
+(31, 1, 0.00, 23, 3),
+(32, 1, 0.00, 23, 4),
+(33, 1, 0.00, 24, 3),
+(34, 1, 0.00, 24, 4),
+(35, 1, 200.00, 25, 3),
+(36, 1, 30.00, 25, 4),
+(37, 1, 200.00, 26, 3),
+(38, 1, 30.00, 26, 4),
+(39, 1, 200.00, 27, 3),
+(40, 1, 200.00, 28, 3),
+(41, 1, 200.00, 29, 3),
+(42, 3, 90.00, 29, 4);
 
 -- --------------------------------------------------------
 
@@ -189,8 +101,7 @@ DELIMITER ;
 
 CREATE TABLE `pedidoenty` (
   `id_pedido` int(11) NOT NULL,
-  `fecha_creacion` date NOT NULL,
-  `fecha_entrega_estimada` date NOT NULL,
+  `fecha_creacion` date NOT NULL DEFAULT current_timestamp(),
   `estado_pedido` varchar(30) NOT NULL,
   `costo_total` decimal(10,0) NOT NULL,
   `id_usuario` int(11) NOT NULL
@@ -200,15 +111,27 @@ CREATE TABLE `pedidoenty` (
 -- Volcado de datos para la tabla `pedidoenty`
 --
 
-INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `fecha_entrega_estimada`, `estado_pedido`, `costo_total`, `id_usuario`) VALUES
-(1, '2025-05-01', '2025-05-05', 'Entregado', 272, 3),
-(2, '2025-05-02', '2025-05-07', 'En proceso', 3425, 4),
-(3, '2025-05-03', '2025-05-08', 'Pendiente', 218, 6),
-(4, '2025-05-04', '2025-05-10', 'En proceso', 200, 5),
-(5, '2025-05-05', '2025-05-12', 'Pendiente', 600, 9),
-(6, '2025-05-06', '2025-05-13', 'Pendiente', 130, 11),
-(7, '2025-05-07', '2025-05-14', 'Pendiente', 880, 12),
-(8, '2025-05-08', '2025-05-15', 'Pendiente', 650, 13);
+INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `estado_pedido`, `costo_total`, `id_usuario`) VALUES
+(1, '2025-05-01', 'Entregado', 272, 3),
+(2, '2025-05-02', 'En proceso', 825, 4),
+(3, '2025-05-03', 'Pendiente', 218, 6),
+(4, '2025-05-04', 'En proceso', 200, 5),
+(5, '2025-05-05', 'Pendiente', 600, 9),
+(6, '2025-05-06', 'Pendiente', 130, 11),
+(7, '2025-05-07', 'Pendiente', 880, 12),
+(8, '2025-05-08', 'Pendiente', 1000, 13),
+(9, '2025-05-19', 'Pendiente', 12002, 3),
+(10, '2025-05-19', 'Pendiente', 800000, 13),
+(11, '2025-05-19', 'Pendiente', 8000, 13),
+(12, '2025-05-19', 'Pendiente', 78, 13),
+(13, '2025-05-19', 'Pendiente', 300, 13),
+(23, '2025-05-19', 'Pendiente', 0, 13),
+(24, '2025-05-19', 'Pendiente', 0, 13),
+(25, '2025-05-19', 'Pendiente', 230, 13),
+(26, '2025-05-19', 'Pendiente', 230, 13),
+(27, '2025-05-19', 'Pendiente', 200, 13),
+(28, '2025-05-19', 'Pendiente', 200, 13),
+(29, '2025-05-19', 'Pendiente', 290, 13);
 
 -- --------------------------------------------------------
 
@@ -229,11 +152,8 @@ CREATE TABLE `productoenty` (
 --
 
 INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`) VALUES
-(2, 'Teclado Mecánico', 100, 50, 'https://example.com/images/tec'),
-(3, 'Monitor LED 24\"', 50, 200, 'https://example.com/images/mon'),
-(4, 'Auriculares Bluetooth', 200, 30, 'https://example.com/images/aur'),
-(9, 'Celular', 0, 30000, 'asdasdad'),
-(10, 'Telefonoasda', 0, 30000, 'https://github.com/KevinSneyderH/ProyectoTecnologias');
+(3, 'Monitor LED 24\"s', 50, 200, 'https://example.com/images/mon'),
+(4, 'Auriculares Bluetooth', 200, 30, 'https://example.com/images/aur');
 
 --
 -- Disparadores `productoenty`
@@ -259,7 +179,7 @@ CREATE TABLE `proveedorenty` (
   `nombre_empresa` varchar(30) NOT NULL,
   `contacto_principal` varchar(30) DEFAULT NULL,
   `telefono` varchar(30) DEFAULT NULL,
-  `email` varchar(30) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL,
   `direccion` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -272,8 +192,7 @@ INSERT INTO `proveedorenty` (`id_proveedor`, `nombre_empresa`, `contacto_princip
 (2, 'Distribuciones El Sol', 'Carlos Pérez', '3001234567', 'carlos@elsol.com', 'Calle 45 #12-34'),
 (3, 'Insumos Industriales S.A.', 'María Gómez', '3019876543', 'maria@insumos.com', 'Carrera 7 #89-10'),
 (4, 'Suministros del Norte', 'Luis Ramírez', '3025558888', 'luis@suminorte.com', 'Av. 3 #45-67'),
-(5, 'TecnoInsumos Ltda', 'Juan Herrera', '3112345678', 'juan@tecnoinsumos.com', 'Carrera 50 #12-34'),
-(7, 'Global Proveedores SAS', 'Paola Ríos', '3123456789', 'paola@global.com', 'Av. 1 #100-200');
+(5, 'TecnoInsumos Ltda', 'Juan Herrera', '3112345678', 'juan@tecnoinsumos.com', 'Carrera 50 #12-34');
 
 -- --------------------------------------------------------
 
@@ -366,13 +285,19 @@ ALTER TABLE `detallecompra`
 -- AUTO_INCREMENT de la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+
+--
+-- AUTO_INCREMENT de la tabla `pedidoenty`
+--
+ALTER TABLE `pedidoenty`
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `productoenty`
 --
 ALTER TABLE `productoenty`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarioenty`
@@ -395,8 +320,8 @@ ALTER TABLE `detallecompra`
 -- Filtros para la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  ADD CONSTRAINT `detallepedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidoenty` (`id_pedido`),
-  ADD CONSTRAINT `detallepedido_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE;
+  ADD CONSTRAINT `detallepedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidoenty` (`id_pedido`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detallepedido_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `pedidoenty`
