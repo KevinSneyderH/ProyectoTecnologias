@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-05-2025 a las 05:12:43
+-- Tiempo de generación: 20-05-2025 a las 08:29:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -91,7 +91,24 @@ INSERT INTO `detallepedido` (`id_detalle_pedido`, `cantidad_solicitada`, `subtot
 (39, 1, 200.00, 27, 3),
 (40, 1, 200.00, 28, 3),
 (41, 1, 200.00, 29, 3),
-(42, 3, 90.00, 29, 4);
+(42, 3, 90.00, 29, 4),
+(44, 1, 200.00, 31, 3),
+(45, 1, 30.00, 31, 4),
+(46, 1, 200.00, 32, 3),
+(47, 1, 30.00, 32, 4),
+(48, 1, 200.00, 33, 3),
+(49, 1, 92389.00, 33, 14),
+(50, 5, 1000.00, 35, 3),
+(51, 1, 92389.00, 35, 14),
+(52, 1, 200.00, 37, 3),
+(53, 2, 400.00, 39, 3),
+(54, 1, 92389.00, 39, 14),
+(55, 1, 200.00, 40, 3),
+(56, 1, 30.00, 40, 4),
+(57, 3, 277167.00, 40, 14),
+(58, 5, 1000.00, 41, 3),
+(59, 3, 90.00, 41, 4),
+(60, 1, 92389.00, 41, 14);
 
 -- --------------------------------------------------------
 
@@ -131,7 +148,19 @@ INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `estado_pedido`, `costo
 (26, '2025-05-19', 'Pendiente', 230, 13),
 (27, '2025-05-19', 'Pendiente', 200, 13),
 (28, '2025-05-19', 'Pendiente', 200, 13),
-(29, '2025-05-19', 'Pendiente', 290, 13);
+(29, '2025-05-19', 'Pendiente', 290, 13),
+(30, '2025-05-19', 'Pendiente', 10000, 13),
+(31, '2025-05-19', 'Pendiente', 230, 13),
+(32, '2025-05-19', 'Pendiente', 230, 13),
+(33, '2025-05-19', 'Pendiente', 92589, 13),
+(34, '2025-05-19', 'Pendiente', 0, 13),
+(35, '2025-05-19', 'Pendiente', 93389, 13),
+(36, '2025-05-19', 'Pendiente', 0, 13),
+(37, '2025-05-20', 'Pendiente', 200, 13),
+(38, '2025-05-20', 'Pendiente', 0, 13),
+(39, '2025-05-20', 'Pendiente', 92789, 13),
+(40, '2025-05-20', 'Pendiente', 277397, 13),
+(41, '2025-05-20', 'Pendiente', 93479, 13);
 
 -- --------------------------------------------------------
 
@@ -153,7 +182,8 @@ CREATE TABLE `productoenty` (
 
 INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`) VALUES
 (3, 'Monitor LED 24\"s', 50, 200, 'https://example.com/images/mon'),
-(4, 'Auriculares Bluetooth', 200, 30, 'https://example.com/images/aur');
+(4, 'Auriculares Bluetooth', 200, 30, 'https://example.com/images/aur'),
+(14, 'Juan', 0, 92389, 'wrwrwrwrwrwrwrwr.com');
 
 --
 -- Disparadores `productoenty`
@@ -285,19 +315,19 @@ ALTER TABLE `detallecompra`
 -- AUTO_INCREMENT de la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidoenty`
 --
 ALTER TABLE `pedidoenty`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT de la tabla `productoenty`
 --
 ALTER TABLE `productoenty`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarioenty`

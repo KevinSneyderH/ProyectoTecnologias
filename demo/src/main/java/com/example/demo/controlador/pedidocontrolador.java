@@ -119,7 +119,7 @@ public class pedidocontrolador {
     @GetMapping("/api/pedidos/{id}/detalles")
     @ResponseBody
     public List<Map<String, Object>> getDetallesPedido(@PathVariable("id") int idPedido) {
-        List<detallePedido> detalles = detallepedidorepositorio.findByPedidoId(idPedido);
+        List<detallePedido> detalles = detallepedidorepositorio.buscarPorIdPedido(idPedido);
         List<Map<String, Object>> response = new ArrayList<>();
         for (detallePedido d : detalles) {
             Map<String, Object> det = new HashMap<>();
@@ -127,6 +127,9 @@ public class pedidocontrolador {
             det.put("cantidadSolicitada", d.getCantidadSolicitada());
             det.put("subtotal", d.getPrecioTotalCompra());
             response.add(det);
+            System.out.println("Producto: " + d.getIdProducto().getNombre());
+            System.out.println("Cantidad solicitada: " + d.getCantidadSolicitada());
+            System.out.println("Subtotal: " + d.getPrecioTotalCompra());
         }
         return response;
     }

@@ -10,5 +10,5 @@ import com.example.demo.entidad.detallePedido;
 
 public interface detallepedidorepositorio extends JpaRepository<detallePedido, Integer> {
     @Query("SELECT d FROM detallePedido d WHERE d.idPedido.id_pedido = :idPedido")
-    List<detallePedido> findByPedidoId(@Param("idPedido") int idPedido);
+    List<detallePedido> buscarPorIdPedido(@Param("idPedido") int idPedido);
 }
