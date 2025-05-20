@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.detallepedidorepositorio;
+import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
 import com.example.demo.entidad.detallecompra;
+import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.detallePedido;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,9 @@ public class usuariocontrolador {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private productorepositorio productoservicio;
 
     @GetMapping("/login")
     public String mostrarFormularioLogin(Authentication authentication) {
@@ -97,6 +102,15 @@ public class usuariocontrolador {
 
         model.addAttribute("transacciones", transacciones);
 
+        List<productoenty> productosBajoStock = productoservicio.findAll()
+                .stream()
+                .filter(p -> p.getCantidad_en_stock() < 10)
+                .toList();
+
+        model.addAttribute("productosBajoStock", productosBajoStock);
+
+        System.out.println(productosBajoStock);
+
         return "principal";
     }
 
@@ -138,6 +152,10 @@ public class usuariocontrolador {
         usuarioservicio.save(nuevoUsuario);
 
         model.addAttribute("mensaje", "Usuario registrado con éxito");
+
+        // ...existing code...
+        // Obtener productos con stock bajo
+
         return "login"; // Redirige al login después del registro exitoso
     }
 

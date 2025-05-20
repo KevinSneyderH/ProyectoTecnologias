@@ -165,9 +165,20 @@
                         if (event.target === modalAgregarProducto) modalAgregarProducto.classList.remove("show");
                     };
 
-                    // Manejar el flujo: al crear pedido, abrir modal agregar producto
+                    // ...código existente...
                     document.getElementById("crearPedidoForm").onsubmit = function (e) {
                         e.preventDefault();
+                        // Validar que al menos una cantidad sea mayor a 0
+                        let algunaCantidad = false;
+                        document.querySelectorAll('.cantidad-input').forEach(input => {
+                            if (parseInt(input.value) > 0) {
+                                algunaCantidad = true;
+                            }
+                        });
+                        if (!algunaCantidad) {
+                            alert("Debes ingresar al menos una cantidad mayor a 0 para crear el pedido.");
+                            return;
+                        }
                         const form = e.target;
                         fetch('/insertped', {
                             method: 'POST',
@@ -179,7 +190,7 @@
                             })
                             .then(data => {
                                 if (data.success) {
-                                    window.location.href = "/Pedidos"; // <--- Redirección aquí
+                                    window.location.href = "/Pedidos";
                                 } else {
                                     alert("Error al crear pedido");
                                 }
@@ -231,18 +242,21 @@
                                 const pedidoId = btn.getAttribute('data-pedido-id');
                                 fetch(`/api/pedidos/${pedidoId}/detalles`)
                                     .then(res => res.json())
-                                    .then(detalles => {
+                                    .then(data => {
+                                        const detalles = data.detalles;
+                                        const total = data.total;
                                         const tbody = document.getElementById('detallePedidoBody');
                                         tbody.innerHTML = '';
                                         detalles.forEach(det => {
                                             const tr = document.createElement('tr');
                                             tr.innerHTML = `
-                            <td>${det.productoNombre}</td>
-                            <td>${det.cantidadSolicitada}</td>
-                            <td>$${det.subtotal.toFixed(2)}</td>
-                        `;
+                                                <td>${det.productoNombre}</td>
+                                                <td>${det.cantidadSolicitada}</td>
+                                                <td>$${det.subtotal.toFixed(2)}</td>
+                                            `;
                                             tbody.appendChild(tr);
                                         });
+                                        document.getElementById('total').textContent = total.toFixed(2);
                                         document.getElementById('detallePedidoModal').classList.add('show');
                                     });
                             };
@@ -278,6 +292,9 @@
                         <!-- Aquí se llenan los detalles -->
                     </tbody>
                 </table>
+                <div style="margin-top: 1rem;">
+                    <strong>Total compra: $<span id="total">0.00</span></strong>
+                </div>
             </div>
         </div>
 </body>

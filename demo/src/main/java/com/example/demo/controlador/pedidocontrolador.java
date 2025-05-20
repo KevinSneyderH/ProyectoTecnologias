@@ -54,8 +54,9 @@ public class pedidocontrolador {
         model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
         model.addAttribute("rolUsuario", usuario.getRol());
 
-        // Ejemplo en tu controlador
+        // Obtener y ordenar los pedidos del más reciente al más antiguo
         List<pedidoenty> pedidos = pedidoservicio.findAll();
+        pedidos.sort((a, b) -> b.getFechaCreacion().compareTo(a.getFechaCreacion()));
         model.addAttribute("pedidos", pedidos);
 
         List<productoenty> productos = productoservicio.findAll();
@@ -93,7 +94,7 @@ public class pedidocontrolador {
         pedido.setCostototal(totalPedido);
         pedido = pedidoservicio.save(pedido);
 
-        // 3. Crear los detalles con su subtotal
+        // 3. Crear los detalles con su subtotal y actualizar stock
         for (int i = 0; i < productoIds.size(); i++) {
             int cantidad = cantidades.get(i);
             if (cantidad > 0) {
@@ -101,12 +102,18 @@ public class pedidocontrolador {
                 double precioUnitario = producto.getPrecio_venta_unitario();
                 double subtotal = cantidad * precioUnitario;
 
+                // Crear detalle del pedido
                 detallePedido detalle = new detallePedido();
                 detalle.setIdPedido(pedido);
                 detalle.setIdProducto(producto);
                 detalle.setCantidadSolicitada(cantidad);
                 detalle.setPrecioTotalCompra(subtotal);
                 detallepedidorepositorio.save(detalle);
+
+                // Actualizar stock del producto
+                int nuevoStock = producto.getCantidad_en_stock() + cantidad;
+                producto.setCantidad_en_stock(nuevoStock);
+                productoservicio.save(producto);
             }
         }
 
@@ -118,19 +125,21 @@ public class pedidocontrolador {
 
     @GetMapping("/api/pedidos/{id}/detalles")
     @ResponseBody
-    public List<Map<String, Object>> getDetallesPedido(@PathVariable("id") int idPedido) {
+    public Map<String, Object> getDetallesPedido(@PathVariable("id") int idPedido) {
         List<detallePedido> detalles = detallepedidorepositorio.buscarPorIdPedido(idPedido);
-        List<Map<String, Object>> response = new ArrayList<>();
+        List<Map<String, Object>> responseDetalles = new ArrayList<>();
+        double total = 0;
         for (detallePedido d : detalles) {
             Map<String, Object> det = new HashMap<>();
             det.put("productoNombre", d.getIdProducto().getNombre());
             det.put("cantidadSolicitada", d.getCantidadSolicitada());
             det.put("subtotal", d.getPrecioTotalCompra());
-            response.add(det);
-            System.out.println("Producto: " + d.getIdProducto().getNombre());
-            System.out.println("Cantidad solicitada: " + d.getCantidadSolicitada());
-            System.out.println("Subtotal: " + d.getPrecioTotalCompra());
+            responseDetalles.add(det);
+            total += d.getPrecioTotalCompra();
         }
+        Map<String, Object> response = new HashMap<>();
+        response.put("detalles", responseDetalles);
+        response.put("total", total);
         return response;
     }
 

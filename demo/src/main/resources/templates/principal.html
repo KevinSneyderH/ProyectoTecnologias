@@ -77,8 +77,24 @@
 
                 <div class="card">
                     <h3>Stock Bajo <span style="color:red; font-size: 0.9rem;">↓ 9.3%</span></h3>
-                    <div style="height: 160px; display: flex; align-items: center; justify-content: center;">
-                        <img src="https://via.placeholder.com/140x140?text=Pie+Chart" alt="Pie chart">
+                    <div class="table-container" style="max-height: 160px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="prod : ${productosBajoStock}">
+                                    <td th:text="${prod.nombre}">Producto</td>
+                                    <td th:text="${prod.cantidad_en_stock}">0</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(productosBajoStock)}">
+                                    <td colspan="2">Sin productos con stock bajo</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
