@@ -88,7 +88,7 @@
                 <!-- Modal para crear pedido -->
                 <div id="pedidoModal" class="modal">
                     <div class="modal-content">
-                        <span class="closePedido" style="cursor:pointer;">&times;</span>
+                        <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Crear pedido</h2>
                         <form id="crearPedidoForm">
                             <input type="text" placeholder="Buscar producto..." id="buscarProducto">
@@ -136,12 +136,12 @@
                     // Modal Crear Pedido
                     const openBtnPedido = document.getElementById("openModalBtnPedido");
                     const modalPedido = document.getElementById("pedidoModal");
-                    const closeBtnPedido = document.querySelector(".closePedido");
+                    const closeBtnPedido = document.querySelector(".close");
                     const cancelPedidoBtn = document.getElementById("cancelPedidoBtn");
 
                     // Modal Agregar Producto
                     const modalAgregarProducto = document.getElementById("agregarProductoModal");
-                    const closeBtnAgregarProducto = document.querySelector(".closeAgregarProducto");
+                    const closeBtnAgregarProducto = document.querySelector(".closeEdit ");
                     const cancelAgregarProductoBtn = document.getElementById("cancelAgregarProductoBtn");
 
                     // Abrir modal crear pedido
@@ -176,7 +176,7 @@
                             }
                         });
                         if (!algunaCantidad) {
-                            alert("Debes ingresar al menos una cantidad mayor a 0 para crear el pedido.");
+                            alert("Debes ingresar almenos un producto");
                             return;
                         }
                         const form = e.target;
@@ -263,7 +263,7 @@
                         });
 
                         // Cerrar modal de detalle
-                        document.querySelector('.closeDetallePedido').onclick = function () {
+                        document.querySelector('.closeEdit').onclick = function () {
                             document.getElementById('detallePedidoModal').classList.remove('show');
                         };
                         window.onclick = function (event) {
@@ -278,7 +278,7 @@
         <!-- AQUÍ, fuera de main y de cualquier div -->
         <div id="detallePedidoModal" class="modal">
             <div class="modal-content">
-                <span class="closeDetallePedido" style="cursor:pointer;">&times;</span>
+                <span class="closeEdit" style="cursor:pointer;">&times;</span>
                 <h2>Detalle del Pedido</h2>
                 <table>
                     <thead>

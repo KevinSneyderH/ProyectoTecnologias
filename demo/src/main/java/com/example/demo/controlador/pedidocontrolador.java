@@ -111,7 +111,7 @@ public class pedidocontrolador {
                 detallepedidorepositorio.save(detalle);
 
                 // Actualizar stock del producto
-                int nuevoStock = producto.getCantidad_en_stock() + cantidad;
+                int nuevoStock = producto.getCantidad_en_stock() - cantidad;
                 producto.setCantidad_en_stock(nuevoStock);
                 productoservicio.save(producto);
             }

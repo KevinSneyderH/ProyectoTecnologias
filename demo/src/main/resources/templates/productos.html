@@ -111,7 +111,7 @@
     </div>
     <div id="productModalAgregar" class="modal">
         <div class="modal-content">
-            <span class="closeAgregar">&times;</span>
+            <span class="close">&times;</span>
             <h2>Añadir Producto</h2>
             <form method="post" action="/insertProducto">
                 <label>Nombre:<br>
@@ -210,7 +210,7 @@
         // Mostrar modal agregar producto
         const openBtnAgregar = document.getElementById("openModalBtnAgregar");
         const modalAgregar = document.getElementById("productModalAgregar");
-        const closeBtnAgregar = document.querySelector(".closeAgregar");
+        const closeBtnAgregar = document.querySelector(".close");
 
         if (openBtnAgregar) {
             openBtnAgregar.onclick = () => {

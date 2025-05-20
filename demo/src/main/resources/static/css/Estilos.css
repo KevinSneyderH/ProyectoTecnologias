@@ -420,7 +420,7 @@ th {
 }
 
 /* Close Button */
-.closePedido {
+.close {
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -428,7 +428,19 @@ th {
     cursor: pointer;
 }
 
-.closePedido:hover {
+.close:hover {
+    color: #000;
+}
+
+.closeEdit {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.closeEdit:hover {
     color: #000;
 }
 
