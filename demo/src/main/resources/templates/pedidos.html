@@ -508,16 +508,21 @@
                             method: 'POST',
                             body: new FormData(form)
                         })
-                            .then(response => response.json())
-                            .then(data => {
-                                modalPedido.classList.remove("show");
-                                // Aquí puedes guardar el id del pedido creado en un campo oculto o variable JS
-                                // y usarlo para asociar los productos al pedido
-                                // Por ejemplo:
-                                document.getElementById("agregarProductoForm").dataset.pedidoId = data.id_pedido;
-                                modalAgregarProducto.classList.add("show");
+                            .then(response => {
+                                if (!response.ok) throw new Error("Network response was not ok");
+                                return response.json();
                             })
-                            .catch(err => alert("Error al crear pedido"));
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.href = "/Pedidos"; // <--- Redirección aquí
+                                } else {
+                                    alert("Error al crear pedido");
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert("Error al crear pedido");
+                            });
                     };
 
                     // Cuando envíes el formulario de agregar producto, usa el id del pedido guardado

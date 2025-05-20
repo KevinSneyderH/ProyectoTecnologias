@@ -17,7 +17,6 @@ import com.example.demo.repositorio.usuariorepositorio;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,19 +72,40 @@ public class pedidocontrolador {
             Authentication authentication) {
         String nombreUsuario = authentication.getName();
         usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
+
+        // 1. Calcular el total del pedido
+        double totalPedido = 0;
+        for (int i = 0; i < productoIds.size(); i++) {
+            int cantidad = cantidades.get(i);
+            if (cantidad > 0) {
+                productoenty producto = productoservicio.findById(productoIds.get(i)).orElseThrow();
+                double precioUnitario = producto.getPrecio_venta_unitario();
+                double subtotal = cantidad * precioUnitario;
+                totalPedido += subtotal;
+            }
+        }
+
+        // 2. Crear el pedido con el total
         pedidoenty pedido = new pedidoenty();
         pedido.setIdUsuario(usuario);
         pedido.setFechaCreacion(java.sql.Date.valueOf(java.time.LocalDate.now()));
         pedido.setEstadopedido("Pendiente");
+        pedido.setCostototal(totalPedido);
         pedido = pedidoservicio.save(pedido);
 
+        // 3. Crear los detalles con su subtotal
         for (int i = 0; i < productoIds.size(); i++) {
             int cantidad = cantidades.get(i);
             if (cantidad > 0) {
+                productoenty producto = productoservicio.findById(productoIds.get(i)).orElseThrow();
+                double precioUnitario = producto.getPrecio_venta_unitario();
+                double subtotal = cantidad * precioUnitario;
+
                 detallePedido detalle = new detallePedido();
                 detalle.setIdPedido(pedido);
-                detalle.setIdProducto(productoservicio.findById(productoIds.get(i)).orElseThrow());
+                detalle.setIdProducto(producto);
                 detalle.setCantidadSolicitada(cantidad);
+                detalle.setPrecioTotalCompra(subtotal);
                 detallepedidorepositorio.save(detalle);
             }
         }
