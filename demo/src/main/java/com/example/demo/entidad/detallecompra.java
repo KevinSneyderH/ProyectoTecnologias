@@ -15,10 +15,6 @@ public class detallecompra {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "id_proveedor")
-    private proveedorenty idProveedor;
-
-    @ManyToOne
     @JoinColumn(name = "idproducto")
     private productoenty idProducto;
 
@@ -29,8 +25,6 @@ public class detallecompra {
     private int cantidad;
 
     private double precio_compra_proveedor;
-
-    private Date FechaCompra;
 
     public detallecompra() {
     }
@@ -51,28 +45,12 @@ public class detallecompra {
         this.precio_compra_proveedor = precio_compra_proveedor;
     }
 
-    public proveedorenty getIdProveedor() {
-        return idProveedor;
-    }
-
-    public void setIdProveedor(proveedorenty idProveedor) {
-        this.idProveedor = idProveedor;
-    }
-
     public productoenty getIdProducto() {
         return idProducto;
     }
 
     public void setIdProducto(productoenty idProducto) {
         this.idProducto = idProducto;
-    }
-
-    public Date getFechaCompra() {
-        return FechaCompra;
-    }
-
-    public void setFechaCompra(Date fechaCompra) {
-        FechaCompra = fechaCompra;
     }
 
     public int getCantidad() {

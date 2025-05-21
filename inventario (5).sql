@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-05-2025 a las 06:27:12
+-- Tiempo de generación: 21-05-2025 a las 15:45:19
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,11 +50,9 @@ INSERT INTO `compraenty` (`id_compra`, `fecha`, `estado`, `costo_total`, `id_pro
 
 CREATE TABLE `detallecompra` (
   `id` int(11) NOT NULL,
-  `id_proveedor` int(11) NOT NULL,
   `idproducto` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
   `precio_compra_proveedor` decimal(10,2) NOT NULL,
-  `FechaCompra` date DEFAULT NULL,
   `id_compra` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -62,9 +60,9 @@ CREATE TABLE `detallecompra` (
 -- Volcado de datos para la tabla `detallecompra`
 --
 
-INSERT INTO `detallecompra` (`id`, `id_proveedor`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `FechaCompra`, `id_compra`) VALUES
-(9, 4, 4, 150, 14.00, '2025-05-19', NULL),
-(13, 3, 3, 20, 120.00, '2025-05-19', NULL);
+INSERT INTO `detallecompra` (`id`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `id_compra`) VALUES
+(9, 4, 150, 14.00, 1),
+(13, 3, 20, 120.00, 1);
 
 --
 -- Disparadores `detallecompra`
@@ -232,7 +230,6 @@ ALTER TABLE `compraenty`
 --
 ALTER TABLE `detallecompra`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_proveedor` (`id_proveedor`),
   ADD KEY `idproducto` (`idproducto`),
   ADD KEY `fk_detallecompra_compra` (`id_compra`);
 
@@ -325,7 +322,6 @@ ALTER TABLE `compraenty`
 -- Filtros para la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
-  ADD CONSTRAINT `detallecompra_ibfk_2` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedorenty` (`id_proveedor`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detallecompra_ibfk_3` FOREIGN KEY (`idproducto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_detallecompra_compra` FOREIGN KEY (`id_compra`) REFERENCES `compraenty` (`id_compra`);
 

@@ -31,6 +31,7 @@
             <button onclick="location.href='/Productos'" class="nav-button">Productos</button>
             <button onclick="location.href='/Proveedores'" class="nav-button">Proveedores</button>
             <button class="nav-button active">Pedidos</button>
+            <button onclick="location.href='/Compras'" class="nav-button">Compras</button>
             <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
             <button class="nav-button">Informes</button>
         </aside>
@@ -86,14 +87,11 @@
 
                 <!-- Modal para crear pedido -->
                 <div id="pedidoModal" class="modal">
-
                     <div class="modal-content">
                         <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Crear pedido</h2>
                         <form id="crearPedidoForm">
-
                             <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
-
                             <table>
                                 <thead>
                                     <tr>

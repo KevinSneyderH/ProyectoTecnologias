@@ -54,12 +54,15 @@ public class transaccionescontrolador {
         // Procesar compras
         for (detallecompra compra : compras) {
             Map<String, Object> t = new HashMap<>();
-            t.put("fecha", compra.getFechaCompra().toString()); // Si tienes fecha, cámbiala aquí
+            t.put("fecha", compra.getCompra().getFecha().toString()); // Si tienes fecha, cámbiala aquí
             t.put("tipo", "Compra");
             t.put("cantidad", compra.getCantidad()); // Si tienes cantidad, cámbiala aquí
             t.put("costoUnitario", compra.getPrecio_compra_proveedor()); // Si tienes costo, cámbiala aquí
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
-            t.put("usuario", compra.getIdProveedor() != null ? compra.getIdProveedor().getNombre_empresa() : "");
+            t.put("usuario",
+                    compra.getCompra().getProveedor() != null ? compra.getCompra().getProveedor().getNombre_empresa()
+                            : ""); // Completa
+
             transacciones.add(t);
         }
 

@@ -60,21 +60,13 @@ public class productoenty {
         this.url_imagen = url_imagen;
     }
 
-    public List<detallecompra> getDetallesCompra() {
-        return detallesCompra;
-    }
-
-    public void setDetallesCompra(List<detallecompra> detallesCompra) {
-        this.detallesCompra = detallesCompra;
-    }
-
-    // 💡 Método para obtener nombres únicos de proveedores
-    public List<String> getNombresProveedores() {
+    public List<java.sql.Date> getFechasDeCompra() {
         if (this.detallesCompra == null) {
-            return List.of(); // Devuelve una lista vacía si no hay detalles
+            return List.of();
         }
         return this.detallesCompra.stream()
-                .map(detalle -> detalle.getIdProveedor().getNombre_empresa())
+                .filter(detalle -> detalle.getCompra() != null)
+                .map(detalle -> detalle.getCompra().getFecha())
                 .distinct()
                 .collect(Collectors.toList());
     }
