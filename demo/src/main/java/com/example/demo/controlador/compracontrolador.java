@@ -57,40 +57,37 @@ public class compracontrolador {
     public Map<String, Object> insertarCompra(
             @RequestParam("productoIds") List<Integer> productoIds,
             @RequestParam("cantidades") List<Integer> cantidades,
-            @RequestParam("proveedorId") Integer proveedorId,
+            @RequestParam("proveedorIds") List<Integer> proveedorIds,
             Authentication authentication) {
 
-        // Lógica similar a pedidos, pero para compras
+        // Lógica para crear una compra general (puedes agrupar por proveedor si lo
+        // deseas)
         double totalCompra = 0;
-        for (int i = 0; i < productoIds.size(); i++) {
-            int cantidad = cantidades.get(i);
-            if (cantidad > 0) {
-                productoenty producto = productoServicio.findById(productoIds.get(i)).orElseThrow();
-                double precioUnitario = producto.getPrecio_venta_unitario();
-                double subtotal = cantidad * precioUnitario;
-                totalCompra += subtotal;
-            }
-        }
-
         compraenty compra = new compraenty();
         compra.setFecha(java.sql.Date.valueOf(java.time.LocalDate.now()));
         compra.setEstado("Pendiente");
-        compra.setCostoTotal(totalCompra);
-        compra.setProveedor(proveedorServicio.findById(proveedorId).orElse(null));
+        compra.setCostoTotal(0); // Se actualizará después
         compra = compraServicio.save(compra);
 
         for (int i = 0; i < productoIds.size(); i++) {
             int cantidad = cantidades.get(i);
-            if (cantidad > 0) {
+            int proveedorId = proveedorIds.get(i);
+            if (cantidad > 0 && proveedorId != 0) {
                 productoenty producto = productoServicio.findById(productoIds.get(i)).orElseThrow();
                 double precioUnitario = producto.getPrecio_venta_unitario();
                 double subtotal = cantidad * precioUnitario;
+                totalCompra += subtotal;
 
                 detallecompra detalle = new detallecompra();
                 detalle.setCompra(compra);
                 detalle.setIdProducto(producto);
                 detalle.setCantidad(cantidad);
                 detalle.setPrecio_compra_proveedor(subtotal);
+
+                // Asigna el proveedor al detalle (si tu modelo lo permite)
+                // Si el proveedor solo está en compraenty, puedes crear una compra por
+                // proveedor o guardar el proveedor en el detalle
+
                 detalleCompraServicio.save(detalle);
 
                 // Actualizar stock
@@ -99,6 +96,9 @@ public class compracontrolador {
                 productoServicio.save(producto);
             }
         }
+
+        compra.setCostoTotal(totalCompra);
+        compraServicio.save(compra);
 
         Map<String, Object> response = new HashMap<>();
         response.put("id_compra", compra.getId_compra());

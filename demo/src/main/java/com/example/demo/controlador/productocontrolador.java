@@ -51,6 +51,7 @@ public class productocontrolador {
         List<productoenty> listaProductos = productoservicio.findAll(); // recupera todos los usuarios
         model.addAttribute("listaProductos", listaProductos); // añade la lista de usuarios a la vista// añade la lista
                                                               // de usuarios a la vista
+
         return "productos";
     }
 

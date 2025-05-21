@@ -89,12 +89,13 @@
                                     <tr>
                                         <th>Producto</th>
                                         <th>Cantidad</th>
+                                        <th>Proveedor</th>
                                         <th>Precio unidad</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="prod : ${productos}">
+                                    <tr th:each="prod,iter : ${productos}">
                                         <td th:text="${prod.nombre}"></td>
                                         <td>
                                             <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
@@ -102,6 +103,13 @@
                                                 th:data-precio-unitario="${prod.precio_venta_unitario}"
                                                 th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
                                                 class="cantidad-input">
+                                        </td>
+                                        <td>
+                                            <select name="proveedorIds">
+                                                <option value="" disabled selected>Seleccione un proveedor</option>
+                                                <option th:each="prov : ${proveedores}" th:value="${prov.id_proveedor}"
+                                                    th:text="${prov.nombre_empresa}"></option>
+                                            </select>
                                         </td>
                                         <td th:text="${prod.precio_venta_unitario}"></td>
                                         <td class="subtotal-cell">$0</td>
