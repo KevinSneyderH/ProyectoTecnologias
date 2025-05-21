@@ -70,4 +70,12 @@ public class productoenty {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    public List<detallecompra> getDetallesCompra() {
+        return detallesCompra;
+    }
+
+    public void setDetallesCompra(List<detallecompra> detallesCompra) {
+        this.detallesCompra = detallesCompra;
+    }
 }

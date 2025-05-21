@@ -77,7 +77,9 @@
                                     <td th:text="${producto.cantidad_en_stock}"></td>
                                     <td>
                                         <span th:each="detalle : ${producto.detallesCompra}"
-                                            th:text="${detalle.idProveedor.nombre_empresa}">Sin proveedor</span>
+                                            th:text="${detalle.compra != null && detalle.compra.proveedor != null ? detalle.compra.proveedor.nombre_empresa : 'Sin proveedor'}">
+                                            Sin proveedor
+                                        </span>
                                     </td>
                                     <td>
                                         <form th:action="@{/deleteProducto}" method="post">
