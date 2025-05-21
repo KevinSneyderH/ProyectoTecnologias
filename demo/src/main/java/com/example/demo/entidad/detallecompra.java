@@ -22,6 +22,10 @@ public class detallecompra {
     @JoinColumn(name = "idproducto")
     private productoenty idProducto;
 
+    @ManyToOne
+    @JoinColumn(name = "id_compra")
+    private compraenty compra;
+
     private int cantidad;
 
     private double precio_compra_proveedor;
@@ -77,5 +81,13 @@ public class detallecompra {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public compraenty getCompra() {
+        return compra;
+    }
+
+    public void setCompra(compraenty compra) {
+        this.compra = compra;
     }
 }

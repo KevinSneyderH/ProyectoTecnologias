@@ -450,6 +450,29 @@ th {
     overflow-y: auto;
 }
 
+/* Scroll vertical para tablas largas dentro de cualquier modal */
+.modal-content table {
+    display: block;
+    max-height: 300px;
+    /* Ajusta la altura máxima según prefieras */
+    overflow-y: auto;
+    width: 100%;
+}
+
+.modal-content thead,
+.modal-content tbody {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.modal-content tbody {
+    display: block;
+    max-height: 220px;
+    /* Ajusta este valor para el área scrollable */
+    overflow-y: auto;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 640px) {
     .modal-content {

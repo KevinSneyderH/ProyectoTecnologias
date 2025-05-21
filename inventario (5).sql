@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-05-2025 a las 08:29:13
+-- Tiempo de generación: 21-05-2025 a las 06:27:12
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,6 +24,27 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `compraenty`
+--
+
+CREATE TABLE `compraenty` (
+  `id_compra` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `estado` varchar(50) NOT NULL,
+  `costo_total` double NOT NULL,
+  `id_proveedor` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `compraenty`
+--
+
+INSERT INTO `compraenty` (`id_compra`, `fecha`, `estado`, `costo_total`, `id_proveedor`) VALUES
+(1, '2025-05-15', 'Pendiente', 12002, 2);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `detallecompra`
 --
 
@@ -33,16 +54,17 @@ CREATE TABLE `detallecompra` (
   `idproducto` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
   `precio_compra_proveedor` decimal(10,2) NOT NULL,
-  `FechaCompra` date DEFAULT NULL
+  `FechaCompra` date DEFAULT NULL,
+  `id_compra` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `detallecompra`
 --
 
-INSERT INTO `detallecompra` (`id`, `id_proveedor`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `FechaCompra`) VALUES
-(9, 4, 4, 150, 14.00, '2025-05-19'),
-(13, 3, 3, 20, 120.00, '2025-05-19');
+INSERT INTO `detallecompra` (`id`, `id_proveedor`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `FechaCompra`, `id_compra`) VALUES
+(9, 4, 4, 150, 14.00, '2025-05-19', NULL),
+(13, 3, 3, 20, 120.00, '2025-05-19', NULL);
 
 --
 -- Disparadores `detallecompra`
@@ -75,40 +97,10 @@ CREATE TABLE `detallepedido` (
 --
 
 INSERT INTO `detallepedido` (`id_detalle_pedido`, `cantidad_solicitada`, `subtotal`, `id_pedido`, `id_producto`) VALUES
-(3, 3, 600.00, 2, 3),
-(4, 15, 225.00, 2, 4),
-(8, 1, 200.00, 4, 3),
-(9, 20, 300.00, 5, 4),
-(13, 10, 300.00, 13, 4),
-(31, 1, 0.00, 23, 3),
-(32, 1, 0.00, 23, 4),
-(33, 1, 0.00, 24, 3),
-(34, 1, 0.00, 24, 4),
-(35, 1, 200.00, 25, 3),
-(36, 1, 30.00, 25, 4),
-(37, 1, 200.00, 26, 3),
-(38, 1, 30.00, 26, 4),
-(39, 1, 200.00, 27, 3),
-(40, 1, 200.00, 28, 3),
-(41, 1, 200.00, 29, 3),
-(42, 3, 90.00, 29, 4),
-(44, 1, 200.00, 31, 3),
-(45, 1, 30.00, 31, 4),
-(46, 1, 200.00, 32, 3),
-(47, 1, 30.00, 32, 4),
-(48, 1, 200.00, 33, 3),
-(49, 1, 92389.00, 33, 14),
-(50, 5, 1000.00, 35, 3),
-(51, 1, 92389.00, 35, 14),
-(52, 1, 200.00, 37, 3),
-(53, 2, 400.00, 39, 3),
-(54, 1, 92389.00, 39, 14),
-(55, 1, 200.00, 40, 3),
-(56, 1, 30.00, 40, 4),
-(57, 3, 277167.00, 40, 14),
-(58, 5, 1000.00, 41, 3),
-(59, 3, 90.00, 41, 4),
-(60, 1, 92389.00, 41, 14);
+(71, 2, 400.00, 48, 3),
+(72, 1, 30.00, 48, 4),
+(73, 2, 400.00, 49, 3),
+(74, 1, 30.00, 49, 4);
 
 -- --------------------------------------------------------
 
@@ -129,38 +121,8 @@ CREATE TABLE `pedidoenty` (
 --
 
 INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `estado_pedido`, `costo_total`, `id_usuario`) VALUES
-(1, '2025-05-01', 'Entregado', 272, 3),
-(2, '2025-05-02', 'En proceso', 825, 4),
-(3, '2025-05-03', 'Pendiente', 218, 6),
-(4, '2025-05-04', 'En proceso', 200, 5),
-(5, '2025-05-05', 'Pendiente', 600, 9),
-(6, '2025-05-06', 'Pendiente', 130, 11),
-(7, '2025-05-07', 'Pendiente', 880, 12),
-(8, '2025-05-08', 'Pendiente', 1000, 13),
-(9, '2025-05-19', 'Pendiente', 12002, 3),
-(10, '2025-05-19', 'Pendiente', 800000, 13),
-(11, '2025-05-19', 'Pendiente', 8000, 13),
-(12, '2025-05-19', 'Pendiente', 78, 13),
-(13, '2025-05-19', 'Pendiente', 300, 13),
-(23, '2025-05-19', 'Pendiente', 0, 13),
-(24, '2025-05-19', 'Pendiente', 0, 13),
-(25, '2025-05-19', 'Pendiente', 230, 13),
-(26, '2025-05-19', 'Pendiente', 230, 13),
-(27, '2025-05-19', 'Pendiente', 200, 13),
-(28, '2025-05-19', 'Pendiente', 200, 13),
-(29, '2025-05-19', 'Pendiente', 290, 13),
-(30, '2025-05-19', 'Pendiente', 10000, 13),
-(31, '2025-05-19', 'Pendiente', 230, 13),
-(32, '2025-05-19', 'Pendiente', 230, 13),
-(33, '2025-05-19', 'Pendiente', 92589, 13),
-(34, '2025-05-19', 'Pendiente', 0, 13),
-(35, '2025-05-19', 'Pendiente', 93389, 13),
-(36, '2025-05-19', 'Pendiente', 0, 13),
-(37, '2025-05-20', 'Pendiente', 200, 13),
-(38, '2025-05-20', 'Pendiente', 0, 13),
-(39, '2025-05-20', 'Pendiente', 92789, 13),
-(40, '2025-05-20', 'Pendiente', 277397, 13),
-(41, '2025-05-20', 'Pendiente', 93479, 13);
+(48, '2025-05-20', 'Pendiente', 430, 13),
+(49, '2025-05-20', 'Pendiente', 430, 13);
 
 -- --------------------------------------------------------
 
@@ -181,9 +143,9 @@ CREATE TABLE `productoenty` (
 --
 
 INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`) VALUES
-(3, 'Monitor LED 24\"s', 50, 200, 'https://example.com/images/mon'),
-(4, 'Auriculares Bluetooth', 200, 30, 'https://example.com/images/aur'),
-(14, 'Juan', 0, 92389, 'wrwrwrwrwrwrwrwr.com');
+(3, 'Monitor LED 24\"s', 23, 200, 'https://example.com/images/mon'),
+(4, 'Auriculares Bluetooth', 188, 30, 'https://example.com/images/aur'),
+(14, 'Juans', 0, 92389, 'wrwrwrwrwrwrwrwr.com');
 
 --
 -- Disparadores `productoenty`
@@ -259,12 +221,20 @@ INSERT INTO `usuarioenty` (`id_usuario`, `nombre_usuario`, `email`, `contrasena_
 --
 
 --
+-- Indices de la tabla `compraenty`
+--
+ALTER TABLE `compraenty`
+  ADD PRIMARY KEY (`id_compra`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
+
+--
 -- Indices de la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_proveedor` (`id_proveedor`),
-  ADD KEY `idproducto` (`idproducto`);
+  ADD KEY `idproducto` (`idproducto`),
+  ADD KEY `fk_detallecompra_compra` (`id_compra`);
 
 --
 -- Indices de la tabla `detallepedido`
@@ -306,6 +276,12 @@ ALTER TABLE `usuarioenty`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `compraenty`
+--
+ALTER TABLE `compraenty`
+  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
@@ -315,13 +291,13 @@ ALTER TABLE `detallecompra`
 -- AUTO_INCREMENT de la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidoenty`
 --
 ALTER TABLE `pedidoenty`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `productoenty`
@@ -340,11 +316,18 @@ ALTER TABLE `usuarioenty`
 --
 
 --
+-- Filtros para la tabla `compraenty`
+--
+ALTER TABLE `compraenty`
+  ADD CONSTRAINT `compraenty_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedorenty` (`id_proveedor`);
+
+--
 -- Filtros para la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
   ADD CONSTRAINT `detallecompra_ibfk_2` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedorenty` (`id_proveedor`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `detallecompra_ibfk_3` FOREIGN KEY (`idproducto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `detallecompra_ibfk_3` FOREIGN KEY (`idproducto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_detallecompra_compra` FOREIGN KEY (`id_compra`) REFERENCES `compraenty` (`id_compra`);
 
 --
 -- Filtros para la tabla `detallepedido`

@@ -54,11 +54,10 @@
                             <table id="productTable">
                                 <thead>
                                     <tr>
-
                                         <th>Fecha Creacion</th>
                                         <th>Costo Total</th>
                                         <th>Estado</th>
-                                        <th>Usuario</th>
+                                        <th>Empleado encargado</th>
                                         <th>Detalle Pedido</th>
                                     </tr>
                                 </thead>
@@ -87,11 +86,14 @@
 
                 <!-- Modal para crear pedido -->
                 <div id="pedidoModal" class="modal">
+
                     <div class="modal-content">
                         <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Crear pedido</h2>
                         <form id="crearPedidoForm">
-                            <input type="text" placeholder="Buscar producto..." id="buscarProducto">
+
+                            <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
+
                             <table>
                                 <thead>
                                     <tr>
@@ -107,7 +109,8 @@
                                         <td>
                                             <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
                                             <input type="number" min="0" name="cantidades"
-                                                th:data-precio-unitario="${prod.precio_venta_unitario}" value="0"
+                                                th:data-precio-unitario="${prod.precio_venta_unitario}"
+                                                th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
                                                 class="cantidad-input">
                                         </td>
                                         <td th:text="${prod.precio_venta_unitario}"></td>
@@ -123,6 +126,29 @@
                                 <button type="submit">Guardar</button>
                             </div>
                         </form>
+                    </div>
+
+                </div>
+                <!-- AQUÍ, fuera de main y de cualquier div -->
+                <div id="detallePedidoModal" class="modal">
+                    <div class="modal-content">
+                        <span class="closeEdit" style="cursor:pointer;">&times;</span>
+                        <h2>Detalle del Pedido</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detallePedidoBody">
+                                <!-- Aquí se llenan los detalles -->
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 1rem;">
+                            <strong>Total Pedido: $<span id="total">0.00</span></strong>
+                        </div>
                     </div>
                 </div>
 
@@ -168,17 +194,38 @@
                     // ...código existente...
                     document.getElementById("crearPedidoForm").onsubmit = function (e) {
                         e.preventDefault();
-                        // Validar que al menos una cantidad sea mayor a 0
                         let algunaCantidad = false;
+                        let stockSuficiente = true;
+                        let mensajeError = "";
+
                         document.querySelectorAll('.cantidad-input').forEach(input => {
-                            if (parseInt(input.value) > 0) {
+                            const cantidad = parseInt(input.value) || 0;
+                            const stock = parseInt(input.getAttribute('data-stock')) || 0;
+                            // Obtén el nombre del producto desde la fila
+                            const nombreProducto = input.closest('tr').querySelector('td').textContent.trim();
+
+                            if (cantidad > 0) {
                                 algunaCantidad = true;
+                                if (cantidad > stock) {
+                                    stockSuficiente = false;
+                                    mensajeError += `No hay suficiente stock para "${nombreProducto}" (stock disponible: ${stock}).\n`;
+                                }
+                            }
+                            if (stock === 0 && cantidad > 0) {
+                                stockSuficiente = false;
+                                mensajeError += `El producto "${nombreProducto}" no tiene existencias.\n`;
                             }
                         });
+
                         if (!algunaCantidad) {
-                            alert("Debes ingresar almenos un producto");
+                            alert("Debes ingresar al menos un producto.");
                             return;
                         }
+                        if (!stockSuficiente) {
+                            alert(mensajeError);
+                            return;
+                        }
+
                         const form = e.target;
                         fetch('/insertped', {
                             method: 'POST',
@@ -190,6 +237,7 @@
                             })
                             .then(data => {
                                 if (data.success) {
+                                    alert("Pedido creado con éxito");
                                     window.location.href = "/Pedidos";
                                 } else {
                                     alert("Error al crear pedido");
@@ -272,31 +320,20 @@
                             }
                         };
                     });
+                    // Filtrar productos al escribir o al hacer clic en el botón
+                    function filtrarProductos() {
+                        const filtro = document.getElementById('searchInput').value.toLowerCase();
+                        document.querySelectorAll('#crearPedidoForm tbody tr').forEach(row => {
+                            const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
+                            row.style.display = nombre.includes(filtro) ? '' : 'none';
+                        });
+                    }
+                    document.getElementById('searchInput').addEventListener('input', filtrarProductos);
+                    document.querySelector('.search-button').addEventListener('click', filtrarProductos);
                 </script>
         </main>
-        </main>
-        <!-- AQUÍ, fuera de main y de cualquier div -->
-        <div id="detallePedidoModal" class="modal">
-            <div class="modal-content">
-                <span class="closeEdit" style="cursor:pointer;">&times;</span>
-                <h2>Detalle del Pedido</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detallePedidoBody">
-                        <!-- Aquí se llenan los detalles -->
-                    </tbody>
-                </table>
-                <div style="margin-top: 1rem;">
-                    <strong>Total compra: $<span id="total">0.00</span></strong>
-                </div>
-            </div>
-        </div>
+
+
 </body>
 
 

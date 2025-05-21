@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Compras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/Estilos.css}">
+</head>
+
+<body>
+    <header>
+        <h1>Compras</h1>
+        <form action="/logout" method="post">
+            <button class="logout-btn">Cerrar Sesión 🏡</button>
+        </form>
+    </header>
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰ Menú</button>
+    <div class="container">
+        <aside id="sidebar">
+            <div class="user-info">
+                <img src="..." alt="Avatar">
+                <strong th:text="${nombreUsuario}">Nombre</strong>
+                <span th:text="${rolUsuario}">Rol</span>
+            </div>
+            <button onclick="location.href='/Principal'" class="nav-button">Principal</button>
+            <button onclick="location.href='/Productos'" class="nav-button">Productos</button>
+            <button onclick="location.href='/Proveedores'" class="nav-button">Proveedores</button>
+            <button class="nav-button active">Compras</button>
+            <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
+            <button class="nav-button">Informes</button>
+        </aside>
+        <main>
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card">
+                        <div class="top-actions">
+                            <button id="openModalBtnCompra">Registrar Compra</button>
+                        </div>
+                        <h3>Compras</h3>
+                        <div class="table-container">
+                            <table id="compraTable">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Costo Total</th>
+                                        <th>Estado</th>
+                                        <th>Proveedor</th>
+                                        <th>Detalle Compra</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="compra : ${compras}">
+                                        <td th:text="${compra.fecha}">-</td>
+                                        <td th:text="${compra.costoTotal}">-</td>
+                                        <td th:text="${compra.estado}">-</td>
+                                        <td th:text="${compra.proveedor.nombre_empresa}">-</td>
+                                        <td>
+                                            <button type="button" class="detalle-compra-btn"
+                                                th:attr="data-compra-id=${compra.id_compra}">
+                                                Detalle Compra
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para registrar compra -->
+                <div id="compraModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" style="cursor:pointer;">&times;</span>
+                        <h2>Registrar compra</h2>
+                        <form id="crearCompraForm">
+                            <label for="proveedorId"><strong>Proveedor:</strong></label>
+                            <select name="proveedorId" id="proveedorId" required>
+                                <option value="" disabled selected>Seleccione un proveedor</option>
+                                <option th:each="prov : ${proveedores}" th:value="${prov.id_proveedor}"
+                                    th:text="${prov.nombre_empresa}"></option>
+                            </select>
+                            <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio unidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="prod : ${productos}">
+                                        <td th:text="${prod.nombre}"></td>
+                                        <td>
+                                            <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
+                                            <input type="number" min="0" name="cantidades"
+                                                th:data-precio-unitario="${prod.precio_venta_unitario}"
+                                                th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
+                                                class="cantidad-input">
+                                        </td>
+                                        <td th:text="${prod.precio_venta_unitario}"></td>
+                                        <td class="subtotal-cell">$0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                                <strong>Total: $<span id="totalCompra">0</span></strong>
+                            </div>
+                            <div class="top-actions">
+                                <button type="button" id="cancelCompraBtn">Cancelar</button>
+                                <button type="submit">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Modal detalle compra -->
+                <div id="detalleCompraModal" class="modal">
+                    <div class="modal-content">
+                        <span class="closeEdit" style="cursor:pointer;">&times;</span>
+                        <h2>Detalle de la Compra</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalleCompraBody">
+                                <!-- Aquí se llenan los detalles -->
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 1rem;">
+                            <strong>Total Compra: $<span id="totalDetalleCompra">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        // Elementos del modal
+                        const openBtnCompra = document.getElementById("openModalBtnCompra");
+                        const modalCompra = document.getElementById("compraModal");
+                        const closeBtnCompra = modalCompra ? modalCompra.querySelector(".close") : null;
+                        const cancelCompraBtn = document.getElementById("cancelCompraBtn");
+
+                        // Abrir modal
+                        if (openBtnCompra) {
+                            openBtnCompra.onclick = () => {
+                                modalCompra.classList.add("show");
+                                document.querySelectorAll('.cantidad-input').forEach(input => {
+                                    input.addEventListener('input', actualizarTotales);
+                                });
+                                actualizarTotales();
+                            };
+                        }
+                        // Cerrar modal
+                        if (closeBtnCompra) closeBtnCompra.onclick = () => modalCompra.classList.remove("show");
+                        if (cancelCompraBtn) cancelCompraBtn.onclick = () => modalCompra.classList.remove("show");
+                        window.onclick = (event) => {
+                            if (event.target === modalCompra) modalCompra.classList.remove("show");
+                        };
+
+                        // Calcular totales
+                        function actualizarTotales() {
+                            let total = 0;
+                            document.querySelectorAll("#crearCompraForm tbody tr").forEach(row => {
+                                const input = row.querySelector('.cantidad-input');
+                                const subtotalCell = row.querySelector('.subtotal-cell');
+                                const cantidad = parseInt(input.value) || 0;
+                                const precio = parseFloat(input.getAttribute('data-precio-unitario')) || 0;
+                                const subtotal = cantidad * precio;
+                                subtotalCell.textContent = "$" + subtotal.toFixed(2);
+                                total += subtotal;
+                            });
+                            document.getElementById("totalCompra").textContent = total.toFixed(2);
+                        }
+
+                        // Filtro de productos
+                        const searchInput = document.getElementById('searchInput');
+                        if (searchInput) {
+                            searchInput.addEventListener('input', function () {
+                                const filtro = this.value.toLowerCase();
+                                document.querySelectorAll('#crearCompraForm tbody tr').forEach(row => {
+                                    const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
+                                    row.style.display = nombre.includes(filtro) ? '' : 'none';
+                                });
+                            });
+                        }
+
+                        // Validación y envío del formulario
+                        document.getElementById("crearCompraForm").onsubmit = function (e) {
+                            e.preventDefault();
+                            let algunaCantidad = false;
+                            let stockSuficiente = true;
+                            let mensajeError = "";
+
+                            document.querySelectorAll('.cantidad-input').forEach(input => {
+                                const cantidad = parseInt(input.value) || 0;
+                                const stock = parseInt(input.getAttribute('data-stock')) || 0;
+                                const nombreProducto = input.closest('tr').querySelector('td').textContent.trim();
+
+
+                            });
+
+                            if (!algunaCantidad) {
+                                alert("Debes ingresar al menos un producto.");
+                                return;
+                            }
+                            if (!stockSuficiente) {
+                                alert(mensajeError);
+                                return;
+                            }
+
+                            const form = e.target;
+                            fetch('/insertcompra', {
+                                method: 'POST',
+                                body: new FormData(form)
+                            })
+                                .then(response => {
+                                    if (!response.ok) throw new Error("Network response was not ok");
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        window.location.href = "/Compras";
+                                    } else {
+                                        alert("Error al registrar la compra");
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    alert("Error al registrar la compra");
+                                });
+                        };
+
+                        // Modal Detalle Compra (AJAX)
+                        document.querySelectorAll('.detalle-compra-btn').forEach(btn => {
+                            btn.addEventListener('click', function () {
+                                const idCompra = this.getAttribute('data-compra-id');
+                                fetch(`/api/compras/${idCompra}/detalles`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        const tbody = document.getElementById('detalleCompraBody');
+                                        tbody.innerHTML = '';
+                                        data.detalles.forEach(det => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = `
+                            <td>${det.productoNombre}</td>
+                            <td>${det.cantidad}</td>
+                            <td>$${det.subtotal.toFixed(2)}</td>
+                        `;
+                                            tbody.appendChild(tr);
+                                        });
+                                        document.getElementById('totalDetalleCompra').textContent = data.total.toFixed(2);
+                                        document.getElementById('detalleCompraModal').classList.add('show');
+                                    });
+                            });
+                        });
+
+                        // Cerrar modal detalle compra
+                        const detalleCompraModal = document.getElementById('detalleCompraModal');
+                        const closeBtnDetalle = detalleCompraModal ? detalleCompraModal.querySelector('.closeEdit') : null;
+                        if (closeBtnDetalle) closeBtnDetalle.onclick = () => detalleCompraModal.classList.remove('show');
+                        window.onclick = (event) => {
+                            if (event.target === detalleCompraModal) detalleCompraModal.classList.remove('show');
+                        };
+                    });
+                </script>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

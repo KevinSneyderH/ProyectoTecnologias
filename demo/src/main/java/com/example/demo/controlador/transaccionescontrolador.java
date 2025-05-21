@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.entidad.detallePedido;
 import com.example.demo.entidad.detallecompra;
+import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.detallepedidorepositorio;
+import com.example.demo.repositorio.usuariorepositorio;
 
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,9 +29,24 @@ public class transaccionescontrolador {
     @Autowired
     private detallepedidorepositorio detallePedidoService;
 
-    @GetMapping("/Transacciones")
-    public String mostrarFormularioLogin(Model model, HttpServletResponse response) {
+    @Autowired
+    public usuariorepositorio usuarioservicio;
 
+    @GetMapping("/Transacciones")
+    public String mostrarFormularioLogin(Model model, HttpServletResponse response, Authentication authentication) {
+
+        // Desactiva caché
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // Proxies
+        // Obtener el nombre de usuario desde la autenticación
+        String nombreUsuario = authentication.getName();
+
+        // Buscar el usuario en la base de datos
+        usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
+
+        model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
+        model.addAttribute("rolUsuario", usuario.getRol());
         List<detallecompra> compras = detalleCompraService.findAll();
         List<detallePedido> pedidos = detallePedidoService.findAll();
         List<Map<String, Object>> transacciones = new ArrayList<>();
