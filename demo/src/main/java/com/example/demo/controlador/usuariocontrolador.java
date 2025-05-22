@@ -78,7 +78,8 @@ public class usuariocontrolador {
             t.put("costoUnitario", compra.getPrecio_compra_proveedor()); // Si tienes costo, cámbiala aquí
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
             t.put("usuario",
-                    compra.getCompra().getProveedor() != null ? compra.getCompra().getProveedor().getNombre_empresa()
+                    compra.getCompra().getUsuario().getNombreUsuario() != null
+                            ? compra.getCompra().getUsuario().getNombreUsuario()
                             : "");
             transacciones.add(t);
         }
@@ -110,8 +111,6 @@ public class usuariocontrolador {
                 .toList();
 
         model.addAttribute("productosBajoStock", productosBajoStock);
-
-        System.out.println(productosBajoStock);
 
         return "principal";
     }

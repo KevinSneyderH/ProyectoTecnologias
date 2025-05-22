@@ -60,8 +60,8 @@ public class transaccionescontrolador {
             t.put("costoUnitario", compra.getPrecio_compra_proveedor()); // Si tienes costo, cámbiala aquí
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
             t.put("usuario",
-                    compra.getCompra().getProveedor() != null ? compra.getCompra().getProveedor().getNombre_empresa()
-                            : ""); // Completa
+                    compra.getCompra() != null ? compra.getCompra().getUsuario().getNombreUsuario() : ""); // Completa
+            // Completa
 
             transacciones.add(t);
         }

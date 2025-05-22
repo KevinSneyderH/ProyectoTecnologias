@@ -24,6 +24,18 @@ public class compraenty {
     @JoinColumn(name = "id_proveedor")
     private proveedorenty proveedor;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private usuarioenty usuario;
+
+    public usuarioenty getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(usuarioenty usuario) {
+        this.usuario = usuario;
+    }
+
     // Getters y Setters
 
     public int getId_compra() {
