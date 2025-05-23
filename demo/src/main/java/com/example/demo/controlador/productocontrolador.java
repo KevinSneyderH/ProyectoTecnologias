@@ -1,14 +1,19 @@
 package com.example.demo.controlador;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
 
 import com.example.demo.entidad.productoenty;
+import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.productorepositorio;
+import com.example.demo.repositorio.proveedorrepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +38,9 @@ public class productocontrolador {
 
     public productorepositorio productoservicio;
 
+    @Autowired
+    public proveedorrepositorio proveedorServicio;
+
     @GetMapping("/Productos")
     public String mostrarPaginaProductos(Model model, HttpServletResponse response, Authentication authentication) {
         // Desactiva caché
@@ -48,9 +56,12 @@ public class productocontrolador {
         model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
         model.addAttribute("rolUsuario", usuario.getRol());
 
-        List<productoenty> listaProductos = productoservicio.findAll(); // recupera todos los usuarios
-        model.addAttribute("listaProductos", listaProductos); // añade la lista de usuarios a la vista// añade la lista
-                                                              // de usuarios a la vista
+        List<productoenty> listaProductos = productoservicio.findAll();
+        model.addAttribute("listaProductos", listaProductos);
+
+        // Agrega esta línea:
+        List<proveedorenty> proveedores = proveedorServicio.findAll();
+        model.addAttribute("proveedores", proveedores);
 
         return "productos";
     }
@@ -71,7 +82,8 @@ public class productocontrolador {
             @RequestParam String nombre,
             @RequestParam int cantidad_en_stock,
             @RequestParam double precio_venta_unitario,
-            @RequestParam String url_imagen) {
+            @RequestParam String url_imagen,
+            @RequestParam("proveedorId") Integer proveedorId) {
         try {
             productoenty producto = productoservicio.findById(id_producto).orElse(null);
             if (producto != null) {
@@ -79,6 +91,8 @@ public class productocontrolador {
                 producto.setCantidad_en_stock(cantidad_en_stock);
                 producto.setPrecio_venta_unitario(precio_venta_unitario);
                 producto.setUrl_imagen(url_imagen);
+                proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElse(null);
+                producto.setProveedor(proveedor);
                 productoservicio.save(producto);
             }
         } catch (Exception e) {
@@ -87,13 +101,13 @@ public class productocontrolador {
         return "redirect:/Productos";
     }
 
-    @PostMapping("/insertProducto") // agregar base de datos
-    public String insertProducto(@Validated productoenty objProducto) {
-        try {
-            productoservicio.save(objProducto);
-        } catch (Exception e) {
-            System.out.println("Error insetar proveedor: " + e.getMessage());
-        }
+    @PostMapping("/insertProducto")
+    public String insertProducto(
+            @Validated productoenty objProducto,
+            @RequestParam("proveedorId") Integer proveedorId) {
+        proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElse(null);
+        objProducto.setProveedor(proveedor);
+        productoservicio.save(objProducto);
         return "redirect:/Productos";
     }
 

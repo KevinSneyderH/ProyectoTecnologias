@@ -65,7 +65,8 @@
                                     <th>Nombre</th>
                                     <th>Precio Venta</th>
                                     <th>Cantidad en stock</th>
-                                    <th>Proveedor(es)</th>
+                                    <th>Imagen</th>
+                                    <th>Proveedor</th>
                                     <th>Eliminar</th>
                                     <th>Editar</th>
                                 </tr>
@@ -73,13 +74,17 @@
                             <tbody>
                                 <tr th:each="producto : ${listaProductos}">
                                     <td th:text="${producto.nombre}"></td>
-                                    <td th:text="${producto.precio_venta_unitario}"></td>
+                                    <td
+                                        th:text="'$' + ${#numbers.formatDecimal(producto.precio_venta_unitario, 1, 'COMMA', 2, 'POINT')}">
+                                    </td>
                                     <td th:text="${producto.cantidad_en_stock}"></td>
                                     <td>
-                                        <span th:each="detalle : ${producto.detallesCompra}"
-                                            th:text="${detalle.compra != null && detalle.compra.proveedor != null ? detalle.compra.proveedor.nombre_empresa : 'Sin proveedor'}">
-                                            Sin proveedor
-                                        </span>
+                                        <img th:src="${producto.url_imagen}" alt="Imagen de [[${producto.nombre}]]"
+                                            style="max-width: 80px; max-height: 80px;">
+                                    </td>
+                                    <td
+                                        th:text="${producto.proveedor != null ? producto.proveedor.nombre_empresa : 'Sin proveedor'}">
+                                        Sin proveedor
                                     </td>
                                     <td>
                                         <form th:action="@{/deleteProducto}" method="post">
@@ -96,10 +101,11 @@
                                     <td>
                                         <div class="top-actions">
                                             <button type="button" class="edit-product-btn" th:attr="data-id=${producto.id_producto},
-                     data-nombre=${producto.nombre},
-                     data-precio=${producto.precio_venta_unitario},
-                     data-cantidad=${producto.cantidad_en_stock},
-                     data-url=${producto.url_imagen}">
+             data-nombre=${producto.nombre},
+             data-precio=${producto.precio_venta_unitario},
+             data-cantidad=${producto.cantidad_en_stock},
+             data-url=${producto.url_imagen},
+             data-proveedor=${producto.proveedor != null ? producto.proveedor.id_proveedor : ''}">
                                                 Editar Producto
                                             </button>
                                         </div>
@@ -123,6 +129,12 @@
                 <label>Precio Unitario:<br>
                     <input type="text" id="PrecioVenta" name="precio_venta_unitario" placeholder="Ej. 200" required>
                 </label><br>
+                <label>Proveedor:</label>
+                <select name="proveedorId" required>
+                    <option th:each="prov : ${proveedores}" th:value="${prov.id_proveedor}"
+                        th:text="${prov.nombre_empresa}"></option>
+                </select>
+
                 <label>URL Imagen:<br>
                     <input type="text" id="url" name="url_imagen"
                         placeholder="Ej. https://www.compumax.com/televisor.jpg" required>
@@ -150,6 +162,11 @@
                 <label>Cantidad en stock:<br>
                     <input type="number" id="cantidadProductoEdit" name="cantidad_en_stock" required>
                 </label><br>
+                <label>Proveedor:</label>
+                <select id="proveedorEdit" name="proveedorId" required>
+                    <option th:each="prov : ${proveedores}" th:value="${prov.id_proveedor}"
+                        th:text="${prov.nombre_empresa}"></option>
+                </select>
                 <label>URL Imagen:<br>
                     <input type="text" id="urlProductoEdit" name="url_imagen" required>
                 </label><br>
@@ -191,7 +208,8 @@
                 document.getElementById('precioProductoEdit').value = this.getAttribute('data-precio');
                 document.getElementById('cantidadProductoEdit').value = this.getAttribute('data-cantidad');
                 document.getElementById('urlProductoEdit').value = this.getAttribute('data-url');
-                productEditModal.classList.add('show');
+                document.getElementById('proveedorEdit').value = this.getAttribute('data-proveedor');
+                productEditModal.classList.add('show'); // <--- Corrección aquí
             });
         });
 

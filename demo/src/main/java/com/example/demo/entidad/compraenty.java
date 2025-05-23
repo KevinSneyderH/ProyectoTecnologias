@@ -1,6 +1,7 @@
 package com.example.demo.entidad;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 
@@ -12,7 +13,7 @@ public class compraenty {
     private int id_compra;
 
     @Column(nullable = false)
-    private Date fecha;
+    private Timestamp fecha;
 
     @Column(nullable = false)
     private String estado;
@@ -20,8 +21,8 @@ public class compraenty {
     @Column(name = "costo_total")
     private double costoTotal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_proveedor")
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_proveedor", nullable = true)
     private proveedorenty proveedor;
 
     @ManyToOne
@@ -46,11 +47,11 @@ public class compraenty {
         this.id_compra = id_compra;
     }
 
-    public Date getFecha() {
+    public Timestamp getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFechaCreacion(Timestamp fecha) {
         this.fecha = fecha;
     }
 

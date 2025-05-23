@@ -1,7 +1,10 @@
 package com.example.demo.entidad;
 
 import jakarta.persistence.*;
+
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -16,6 +19,10 @@ public class productoenty {
 
     @OneToMany(mappedBy = "idProducto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<detallecompra> detallesCompra;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_proveedor", nullable = true)
+    private proveedorenty proveedor;
 
     public productoenty() {
     }
@@ -60,7 +67,7 @@ public class productoenty {
         this.url_imagen = url_imagen;
     }
 
-    public List<java.sql.Date> getFechasDeCompra() {
+    public List<Timestamp> getFechasDeCompra() {
         if (this.detallesCompra == null) {
             return List.of();
         }
@@ -78,4 +85,13 @@ public class productoenty {
     public void setDetallesCompra(List<detallecompra> detallesCompra) {
         this.detallesCompra = detallesCompra;
     }
+
+    public proveedorenty getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(proveedorenty proveedor) {
+        this.proveedor = proveedor;
+    }
+
 }

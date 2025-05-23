@@ -44,11 +44,7 @@
                         <div class="top-actions">
                             <button id="openModalBtnPedido">Crear Pedido</button>
                         </div>
-                        <div class="center-search">
-                            <div class="search-container">
 
-                            </div>
-                        </div>
 
                         <h3>Pedidos</h3>
                         <div class="table-container">
@@ -65,7 +61,9 @@
                                 <tbody>
                                     <tr th:each="pedido : ${pedidos}">
                                         <td th:text="${pedido.fechaCreacion}">-</td>
-                                        <td th:text="${pedido.costototal}">-</td>
+                                        <td
+                                            th:text="'$' + ${#numbers.formatDecimal(pedido.costototal, 1, 'COMMA', 2, 'POINT')}">
+                                        </td>
                                         <td th:text="${pedido.estadopedido}">-</td>
                                         <td th:text="${pedido.idUsuario.nombreUsuario}">-</td>
                                         <td>
@@ -111,7 +109,9 @@
                                                 th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
                                                 class="cantidad-input">
                                         </td>
-                                        <td th:text="${prod.precio_venta_unitario}"></td>
+                                        <td
+                                            th:text="'$' + ${#numbers.formatDecimal(prod.precio_venta_unitario, 1, 'COMMA', 2, 'POINT')}">
+                                        </td>
                                         <td class="subtotal-cell">$0</td>
                                     </tr>
                                 </tbody>
@@ -275,10 +275,10 @@
                             const precio = parseFloat(input.dataset.precioUnitario);
                             const cantidad = parseInt(input.value) || 0;
                             const subtotal = precio * cantidad;
-                            input.closest('tr').querySelector('.subtotal-cell').textContent = '$' + subtotal.toFixed(2);
+                            input.closest('tr').querySelector('.subtotal-cell').textContent = '$' + subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 });
                             total += subtotal;
                         });
-                        document.getElementById('totalPedido').textContent = total.toFixed(2);
+                        document.getElementById('totalPedido').textContent = total.toLocaleString('es-CO', { minimumFractionDigits: 2 });
                     }
                 </script>
                 <script>
@@ -298,7 +298,7 @@
                                             tr.innerHTML = `
                                                 <td>${det.productoNombre}</td>
                                                 <td>${det.cantidadSolicitada}</td>
-                                                <td>$${det.subtotal.toFixed(2)}</td>
+                                                <td>$${det.subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</td>
                                             `;
                                             tbody.appendChild(tr);
                                         });

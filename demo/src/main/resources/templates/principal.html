@@ -59,7 +59,10 @@
                                     <td th:text="${transaccion.fecha}">-</td>
                                     <td th:text="${transaccion.tipo}">-</td>
                                     <td th:text="${transaccion.cantidad}">-</td>
-                                    <td th:text="${transaccion.costoUnitario}">-</td>
+
+                                    <td
+                                        th:text="'$' + ${#numbers.formatDecimal(transaccion.costoUnitario, 1, 'COMMA', 2, 'POINT')}">
+                                    </td>
                                     <td th:text="${transaccion.producto}">-</td>
                                     <td th:text="${transaccion.usuario}">-</td>
 

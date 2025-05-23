@@ -467,10 +467,30 @@ th {
 }
 
 .modal-content tbody {
-    display: block;
     max-height: 220px;
-    /* Ajusta este valor para el área scrollable */
     overflow-y: auto;
+    /* NO uses display: block aquí */
+}
+
+/* Estilo para el select de proveedores */
+select[name="proveedorId"],
+select#proveedorEdit {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 6px;
+    background: #f7fafc;
+    color: #222;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+select[name="proveedorId"]:focus,
+select#proveedorEdit:focus {
+    border-color: #007bff;
+    outline: none;
+    background: #fff;
 }
 
 /* Responsive Adjustments */

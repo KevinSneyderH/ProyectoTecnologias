@@ -11,10 +11,12 @@ import com.example.demo.entidad.compraenty;
 import com.example.demo.entidad.detallecompra;
 import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.proveedorenty;
+import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.comprarepositorio;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.proveedorrepositorio;
+import com.example.demo.repositorio.usuariorepositorio;
 
 @Controller
 public class compracontrolador {
@@ -30,6 +32,9 @@ public class compracontrolador {
 
     @Autowired
     public proveedorrepositorio proveedorServicio;
+
+    @Autowired
+    public usuariorepositorio usuarioservicio;
 
     @GetMapping("/Compras")
     public String mostrarCompras(Model model, Authentication authentication) {
@@ -57,22 +62,26 @@ public class compracontrolador {
     public Map<String, Object> insertarCompra(
             @RequestParam("productoIds") List<Integer> productoIds,
             @RequestParam("cantidades") List<Integer> cantidades,
-            @RequestParam("proveedorIds") List<Integer> proveedorIds,
+            @RequestParam("proveedorId") Integer proveedorId,
             Authentication authentication) {
 
-        // Lógica para crear una compra general (puedes agrupar por proveedor si lo
-        // deseas)
+        String nombreUsuario = authentication.getName();
+        usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
+
+        proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElseThrow();
+
         double totalCompra = 0;
         compraenty compra = new compraenty();
-        compra.setFecha(java.sql.Date.valueOf(java.time.LocalDate.now()));
+        compra.setFechaCreacion(new java.sql.Timestamp(System.currentTimeMillis()));
         compra.setEstado("Pendiente");
-        compra.setCostoTotal(0); // Se actualizará después
+        compra.setCostoTotal(0);
+        compra.setUsuario(usuario);
+        compra.setProveedor(proveedor);
         compra = compraServicio.save(compra);
 
         for (int i = 0; i < productoIds.size(); i++) {
             int cantidad = cantidades.get(i);
-            int proveedorId = proveedorIds.get(i);
-            if (cantidad > 0 && proveedorId != 0) {
+            if (cantidad > 0) {
                 productoenty producto = productoServicio.findById(productoIds.get(i)).orElseThrow();
                 double precioUnitario = producto.getPrecio_venta_unitario();
                 double subtotal = cantidad * precioUnitario;
@@ -83,10 +92,6 @@ public class compracontrolador {
                 detalle.setIdProducto(producto);
                 detalle.setCantidad(cantidad);
                 detalle.setPrecio_compra_proveedor(subtotal);
-
-                // Asigna el proveedor al detalle (si tu modelo lo permite)
-                // Si el proveedor solo está en compraenty, puedes crear una compra por
-                // proveedor o guardar el proveedor en el detalle
 
                 detalleCompraServicio.save(detalle);
 

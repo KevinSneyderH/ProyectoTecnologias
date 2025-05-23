@@ -89,7 +89,7 @@ public class pedidocontrolador {
         // 2. Crear el pedido con el total
         pedidoenty pedido = new pedidoenty();
         pedido.setIdUsuario(usuario);
-        pedido.setFechaCreacion(java.sql.Date.valueOf(java.time.LocalDate.now()));
+        pedido.setFechaCreacion(new java.sql.Timestamp(System.currentTimeMillis()));
         pedido.setEstadopedido("Pendiente");
         pedido.setCostototal(totalPedido);
         pedido = pedidoservicio.save(pedido);
