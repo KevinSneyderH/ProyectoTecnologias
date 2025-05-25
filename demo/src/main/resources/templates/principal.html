@@ -36,9 +36,11 @@
             <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
         </aside>
         <main>
-            <div><h1 style="text-align: center;">Notificaciones</h1></div>
+            <div>
+                <h1 style="text-align: center;">Notificaciones</h1>
+            </div>
             <div class="dashboard">
-                
+
                 <div class="card">
                     <h3>Transacciones Recientes</h3>
                     <div class="table-container">
@@ -76,28 +78,35 @@
 
 
                 <div class="card">
-                    <h3>Stock Bajo <span style="color:red; font-size: 0.9rem;">↓</span></h3>
-                    <div class="table-container" style="max-height: 160px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="prod : ${productosBajoStock}">
-                                    <td th:text="${prod.nombre}">Producto</td>
-                                    <td th:text="${prod.cantidad_en_stock}">0</td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(productosBajoStock)}">
-                                    <td colspan="2">Sin productos con stock bajo</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <!-- Tabla de productos con stock bajo -->
+                    <h3>Productos con Stock Bajo</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad en Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="producto : ${productosBajoStock}">
+                                <td th:text="${producto.nombre}"></td>
+                                <td th:text="${producto.cantidad_en_stock}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Gráfica de productos con stock bajo -->
+                    <h3>Gráfica de productos con stock bajo</h3>
+                    <canvas id="stockChart" width="600" height="300"></canvas>
+
+
+
+
+
                 </div>
+
             </div>
+
         </main>
     </div>
     <script>
@@ -105,6 +114,74 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('hidden');
         }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        let nombres = [
+            /*[# th:each="p : ${productosBajoStock}"]*/
+            '[[${p.nombre}]]',
+            /*[/]*/
+        ];
+
+        let cantidades = [
+            /*[# th:each="p : ${productosBajoStock}"]*/
+            "[[${ p.cantidad_en_stock }]]",
+            /*[/]*/
+        ];
+
+        let precios = [
+            /*[# th:each="p : ${productosBajoStock}"]*/
+            "[[${ p.precio_venta_unitario }]]",
+            /*[/]*/
+        ];
+
+        const ctx = document.getElementById('stockChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nombres,
+                datasets: [{
+                    label: 'Cantidad en Stock',
+                    data: cantidades,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Precio de Venta Unitario',
+                    data: precios,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        onClick: function (e, legendItem, legend) {
+                            const index = legendItem.datasetIndex;
+                            const ci = legend.chart;
+                            // Solo mostrar el dataset clickeado, ocultar los demás
+                            ci.data.datasets.forEach((dataset, i) => {
+                                ci.setDatasetVisibility(i, i === index);
+                            });
+                            ci.update();
+                        }
+                    }
+                }
+
+            }
+        });
+
+        /*]]>*/
     </script>
 </body>
 

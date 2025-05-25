@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.example.demo.entidad.productoenty;
-import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.entidad.categoriaenty;
 import com.example.demo.entidad.marcaenty;
@@ -67,7 +66,7 @@ public class productocontrolador {
         List<productoenty> listaProductos = productoservicio.findAll();
         model.addAttribute("listaProductos", listaProductos);
 
-       List<marcaenty> listaMarcas = marcaservicio.findAll();
+        List<marcaenty> listaMarcas = marcaservicio.findAll();
         model.addAttribute("listaMarcas", listaMarcas);
 
         List<categoriaenty> listaCategorias = categoriaservicio.findAll();

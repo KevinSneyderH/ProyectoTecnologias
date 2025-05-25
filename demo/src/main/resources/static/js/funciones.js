@@ -31,7 +31,7 @@ function filtrar() {
     filtradas = filtradas.filter(fila => String(fila.cells[5].dataset.usuario) === String(usuario));
   }
 
-  
+
   // Ordenar por fecha
   if (fecha) {
     filtradas.sort((a, b) => {
@@ -39,6 +39,8 @@ function filtrar() {
       const bFecha = parseFecha(b.cells[0].dataset.fecha);
       return fecha === "asc" ? aFecha - bFecha : bFecha - aFecha;
     });
+
+
   }
 
   // Ocultar todas las filas
@@ -60,12 +62,10 @@ function filtrar() {
 function parseFecha(fechaStr) {
   if (!fechaStr) return new Date("1900-01-01");
   if (fechaStr.includes("/")) {
-    // Formato dd/MM/yyyy
     const [d, m, y] = fechaStr.split("/");
     return new Date(`${y}-${m}-${d}`);
   }
-  // Formato ISO o yyyy-MM-dd
-  return new Date(fechaStr);
+  return new Date(fechaStr); // formato ISO (yyyy-MM-dd)
 }
 
 function limpiarFiltros() {

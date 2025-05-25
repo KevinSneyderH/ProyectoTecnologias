@@ -16,6 +16,7 @@ import com.example.demo.servicio.CustomUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig {
 
+        @SuppressWarnings("removal")
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
@@ -45,6 +46,7 @@ public class SecurityConfig {
         @Autowired
         private CustomUserDetailsService userDetailsService;
 
+        @SuppressWarnings("removal")
         @Bean
         public AuthenticationManager authManager(HttpSecurity http) throws Exception {
                 return http.getSharedObject(AuthenticationManagerBuilder.class)

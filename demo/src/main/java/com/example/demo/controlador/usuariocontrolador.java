@@ -5,7 +5,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.HashMap;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
@@ -51,14 +53,11 @@ public class usuariocontrolador {
     @GetMapping("/Principal")
     public String mostrarPaginaUsuario(Model model, HttpServletResponse response, Authentication authentication) {
         // Desactiva caché
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        response.setDateHeader("Expires", 0); // Proxies
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
 
-        // Obtener el nombre de usuario desde la autenticación
         String nombreUsuario = authentication.getName();
-
-        // Buscar el usuario en la base de datos
         usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
 
         model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
@@ -72,36 +71,41 @@ public class usuariocontrolador {
         // Procesar compras
         for (detallecompra compra : compras) {
             Map<String, Object> t = new HashMap<>();
-            t.put("fecha", compra.getCompra().getFecha().toString()); // Si tienes fecha, cámbiala aquí
+            t.put("fecha", compra.getCompra().getFecha()); // Timestamp directamente
             t.put("tipo", "Compra");
-            t.put("cantidad", compra.getCantidad()); // Si tienes cantidad, cámbiala aquí
-            t.put("costoUnitario", compra.getPrecio_compra_proveedor()); // Si tienes costo, cámbiala aquí
+            t.put("cantidad", compra.getCantidad());
+            t.put("costoUnitario", compra.getPrecio_compra_proveedor());
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
-            t.put("usuario",
-                    compra.getCompra().getUsuario().getNombreUsuario() != null
-                            ? compra.getCompra().getUsuario().getNombreUsuario()
-                            : "");
+            t.put("usuario", compra.getCompra().getUsuario().getNombreUsuario() != null
+                    ? compra.getCompra().getUsuario().getNombreUsuario()
+                    : "");
             transacciones.add(t);
         }
 
         // Procesar pedidos
         for (detallePedido pedido : pedidos) {
             Map<String, Object> t = new HashMap<>();
-            String fecha = "";
+            Timestamp fecha = null;
             if (pedido.getIdPedido() != null && pedido.getIdPedido().getFechaCreacion() != null) {
-                fecha = pedido.getIdPedido().getFechaCreacion().toString();
+                fecha = pedido.getIdPedido().getFechaCreacion(); // Timestamp directamente
             }
-            t.put("fecha", fecha); // Si tienes fecha, cámbiala aquí
+            t.put("fecha", fecha);
             t.put("tipo", "Pedido");
             t.put("cantidad", pedido.getCantidadSolicitada());
             t.put("costoUnitario", pedido.getPrecioTotalCompra());
             t.put("producto", pedido.getIdProducto() != null ? pedido.getIdProducto().getNombre() : "");
-            t.put("usuario",
-                    pedido.getIdPedido() != null ? pedido.getIdPedido().getIdUsuario().getNombreUsuario() : ""); // Completa
-                                                                                                                 // //
-                                                                                                                 // relacionado
+            t.put("usuario", pedido.getIdPedido() != null
+                    ? pedido.getIdPedido().getIdUsuario().getNombreUsuario()
+                    : "");
             transacciones.add(t);
         }
+
+        // Ordenar por fecha descendente usando Timestamp
+        transacciones = transacciones.stream()
+                .filter(t -> t.get("fecha") != null)
+                .sorted((t1, t2) -> ((Timestamp) t2.get("fecha")).compareTo((Timestamp) t1.get("fecha")))
+                .limit(10)
+                .collect(Collectors.toList());
 
         model.addAttribute("transacciones", transacciones);
 

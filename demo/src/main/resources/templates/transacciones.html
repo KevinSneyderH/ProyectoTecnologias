@@ -55,7 +55,7 @@
                             <option value="Compra">Compra</option>
                         </select>
 
-                        
+
 
                         <select id="producto" name="Selectfiltos">
                             <option value="">Producto</option>
@@ -73,8 +73,8 @@
 
 
                         <div class="top-actions">
-                        <button class="buscar" onclick="filtrar()">Buscar</button>
-                        <button class="limpiar" onclick="limpiarFiltros()">Limpiar</button>
+                            <button class="buscar" onclick="filtrar()">Buscar</button>
+                            <button class="limpiar" onclick="limpiarFiltros()">Limpiar</button>
                         </div>
                     </div>
 
@@ -93,6 +93,7 @@
                             <tbody id="tbody">
                                 <tr th:each="transaccion : ${transacciones}">
                                     <td th:text="${transaccion.fecha}" th:attr="data-fecha=${transaccion.fecha}">-</td>
+
                                     <td th:text="${transaccion.tipo}">-</td>
                                     <td th:text="${transaccion.cantidad}">-</td>
                                     <td th:text="'$' + ${#numbers.formatDecimal(transaccion.costoUnitario, 1, 'COMMA', 2, 'POINT')}"
@@ -100,8 +101,8 @@
                                     </td>
                                     <td th:text="${transaccion.producto}"
                                         th:attr="data-producto=${transaccion.idProducto}">-</td>
-                                    <td th:text="${transaccion.usuario}"
-                                        th:attr="data-usuario=${transaccion.usuario}">-</td> 
+                                    <td th:text="${transaccion.usuario}" th:attr="data-usuario=${transaccion.usuario}">-
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

@@ -7,11 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import com.example.demo.entidad.categoriaenty;
 import com.example.demo.entidad.compraenty;
 import com.example.demo.entidad.detallecompra;
 import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
+import com.example.demo.repositorio.categoriarepositorio;
 import com.example.demo.repositorio.comprarepositorio;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.productorepositorio;
@@ -36,6 +38,9 @@ public class compracontrolador {
     @Autowired
     public usuariorepositorio usuarioservicio;
 
+    @Autowired
+    public categoriarepositorio categoriaservicio;
+
     @GetMapping("/Compras")
     public String mostrarCompras(Model model, Authentication authentication) {
         // Usuario y rol
@@ -54,6 +59,9 @@ public class compracontrolador {
         List<proveedorenty> proveedores = proveedorServicio.findAll();
         model.addAttribute("proveedores", proveedores);
 
+        List<categoriaenty> categorias = categoriaservicio.findAll();
+        model.addAttribute("categorias", categorias);
+
         return "compra";
     }
 
@@ -66,8 +74,6 @@ public class compracontrolador {
 
         String nombreUsuario = authentication.getName();
         usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
-
-       
 
         double totalCompra = 0;
         compraenty compra = new compraenty();

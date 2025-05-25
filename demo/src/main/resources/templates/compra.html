@@ -82,21 +82,32 @@
                         <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Registrar compra</h2>
                         <form id="crearCompraForm">
-                            
+
                             <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
+
+                            <select id="categoria" name="Select">
+                                <option value="">Categoria</option>
+                                <option th:each="vcategoria:${categorias}" th:value="${vcategoria.nombre}">
+                                    <font th:text="${vcategoria.nombre}"></font>
+                                </option>
+                            </select>
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
+                                        <th>Marca</th>
                                         <th>Cantidad</th>
-
                                         <th>Precio unidad</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="prod : ${productos}">
+
+                                    <tr th:each="prod : ${productos}"
+                                        th:attr="data-categoria=${prod.idcategoria.nombre}">
                                         <td th:text="${prod.nombre}"></td>
+                                        <td th:text="${prod.idmarca.nombre}"></td>
+                                        <td th:text="${prod.idcategoria.nombre}" hidden></td>
                                         <td>
                                             <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
                                             <input type="number" min="0" name="cantidades"
@@ -162,8 +173,8 @@
                         if (openBtnCompra) {
                             openBtnCompra.onclick = () => {
                                 modalCompra.classList.add("show");
-                               
-                                
+
+
                                 document.querySelectorAll('.cantidad-input').forEach(input => {
                                     input.addEventListener('input', actualizarTotales);
                                 });
@@ -192,7 +203,7 @@
                             document.getElementById("totalCompra").textContent = total.toFixed(2);
                         }
 
-                        
+
 
                         // Validación y envío del formulario
                         document.getElementById("crearCompraForm").onsubmit = function (e) {
@@ -294,6 +305,28 @@
 
 
                 </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const categoriaSelect = document.getElementById('categoria');
+                        const filasProductos = document.querySelectorAll('#compraModal tbody tr');
+
+                        categoriaSelect.addEventListener('change', function () {
+                            const categoriaSeleccionada = categoriaSelect.value.toLowerCase();
+
+                            filasProductos.forEach(fila => {
+                                const categoriaFila = fila.getAttribute('data-categoria')?.toLowerCase() || '';
+
+                                // Mostrar todos si no hay selección
+                                if (!categoriaSeleccionada || categoriaSeleccionada === '') {
+                                    fila.style.display = '';
+                                } else {
+                                    fila.style.display = categoriaFila === categoriaSeleccionada ? '' : 'none';
+                                }
+                            });
+                        });
+                    });
+                </script>
+
             </div>
         </main>
     </div>
