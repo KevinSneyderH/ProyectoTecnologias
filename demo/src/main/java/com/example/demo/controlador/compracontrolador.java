@@ -62,13 +62,12 @@ public class compracontrolador {
     public Map<String, Object> insertarCompra(
             @RequestParam("productoIds") List<Integer> productoIds,
             @RequestParam("cantidades") List<Integer> cantidades,
-            @RequestParam("proveedorId") Integer proveedorId,
             Authentication authentication) {
 
         String nombreUsuario = authentication.getName();
         usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
 
-        proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElseThrow();
+       
 
         double totalCompra = 0;
         compraenty compra = new compraenty();
@@ -76,7 +75,6 @@ public class compracontrolador {
         compra.setEstado("Pendiente");
         compra.setCostoTotal(0);
         compra.setUsuario(usuario);
-        compra.setProveedor(proveedor);
         compra = compraServicio.save(compra);
 
         for (int i = 0; i < productoIds.size(); i++) {

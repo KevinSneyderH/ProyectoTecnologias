@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-05-2025 a las 06:24:20
+-- Tiempo de generación: 25-05-2025 a las 05:53:27
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,6 +24,30 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `categoriaenty`
+--
+
+CREATE TABLE `categoriaenty` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categoriaenty`
+--
+
+INSERT INTO `categoriaenty` (`id`, `nombre`) VALUES
+(1, 'electrodomésticos'),
+(2, 'Muebles'),
+(3, 'herramientas'),
+(4, 'vehículos'),
+(5, 'alimentos'),
+(6, 'licorería'),
+(7, 'Celulares');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `compraenty`
 --
 
@@ -31,7 +55,7 @@ CREATE TABLE `compraenty` (
   `id_compra` int(11) NOT NULL,
   `fecha` datetime NOT NULL,
   `estado` varchar(50) NOT NULL,
-  `costo_total` double NOT NULL,
+  `costo_total` decimal(10,0) NOT NULL,
   `id_proveedor` int(11) DEFAULT NULL,
   `id_usuario` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -46,7 +70,10 @@ INSERT INTO `compraenty` (`id_compra`, `fecha`, `estado`, `costo_total`, `id_pro
 (24, '2025-05-22 00:00:00', 'Pendiente', 7800, 860, 6),
 (25, '2025-05-22 00:00:00', 'Pendiente', 3900, 860, 6),
 (26, '2025-05-22 23:15:32', 'Pendiente', 12000000, 878923, 6),
-(27, '2025-05-22 23:16:37', 'Pendiente', 6800000, 878923, 6);
+(27, '2025-05-22 23:16:37', 'Pendiente', 6800000, 878923, 6),
+(28, '2025-05-24 21:22:26', 'Pendiente', 3900, NULL, 13),
+(29, '2025-05-24 21:22:35', 'Pendiente', 6000000, NULL, 13),
+(30, '2025-05-24 21:30:45', 'Pendiente', 18003900, NULL, 13);
 
 -- --------------------------------------------------------
 
@@ -69,12 +96,15 @@ CREATE TABLE `detallecompra` (
 INSERT INTO `detallecompra` (`id`, `idproducto`, `cantidad`, `precio_compra_proveedor`, `id_compra`) VALUES
 (48, 18, 5, 30000000.00, 22),
 (49, 18, 5, 30000000.00, 23),
-(50, 19, 10, 8000000.00, 23),
 (51, 17, 2, 7800.00, 24),
 (52, 17, 1, 3900.00, 25),
 (53, 18, 2, 12000000.00, 26),
 (54, 18, 1, 6000000.00, 27),
-(55, 19, 1, 800000.00, 27);
+(56, 17, 1, 3900.00, 28),
+(57, 20, 1, 6000000.00, 29),
+(58, 17, 1, 3900.00, 30),
+(59, 18, 1, 6000000.00, 30),
+(60, 20, 2, 12000000.00, 30);
 
 --
 -- Disparadores `detallecompra`
@@ -112,12 +142,33 @@ INSERT INTO `detallepedido` (`id_detalle_pedido`, `cantidad_solicitada`, `subtot
 (83, 1, 6000000.00, 56, 18),
 (84, 1, 3900.00, 57, 17),
 (85, 1, 6000000.00, 57, 18),
-(86, 1, 800000.00, 57, 19),
 (87, 1, 3900.00, 58, 17),
 (88, 2, 7800.00, 59, 17),
 (89, 4, 24000000.00, 61, 18),
 (90, 1, 6000000.00, 62, 18),
-(91, 2, 7800.00, 63, 17);
+(91, 2, 7800.00, 63, 17),
+(92, 1, 6000000.00, 64, 18);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `marcaenty`
+--
+
+CREATE TABLE `marcaenty` (
+  `id` int(10) NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `marcaenty`
+--
+
+INSERT INTO `marcaenty` (`id`, `nombre`) VALUES
+(1, 'lg'),
+(2, 'samsumg'),
+(3, 'Diana'),
+(4, 'Gelvez');
 
 -- --------------------------------------------------------
 
@@ -146,7 +197,8 @@ INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `estado_pedido`, `costo
 (60, '2025-05-22 23:03:37', 'Pendiente', 12002, 3),
 (61, '2025-05-22 00:00:00', 'Pendiente', 24000000, 6),
 (62, '2025-05-22 23:09:25', 'Pendiente', 6000000, 6),
-(63, '2025-05-22 23:09:35', 'Pendiente', 7800, 6);
+(63, '2025-05-22 23:09:35', 'Pendiente', 7800, 6),
+(64, '2025-05-24 21:13:19', 'Pendiente', 6000000, 13);
 
 -- --------------------------------------------------------
 
@@ -160,17 +212,18 @@ CREATE TABLE `productoenty` (
   `cantidad_en_stock` int(11) NOT NULL DEFAULT 0,
   `precio_venta_unitario` decimal(10,0) NOT NULL,
   `url_imagen` varchar(200) NOT NULL,
-  `id_proveedor` int(11) DEFAULT NULL
+  `marca` int(11) NOT NULL,
+  `categoría` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `productoenty`
 --
 
-INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`, `id_proveedor`) VALUES
-(17, 'Arroz Diana', 76, 3900, 'https://exitocol.vteximg.com.br/arquivos/ids/27182455/Arroz-Blanco-Bolsa-X-3000g-130407_a.jpg', 860),
-(18, 'Televisor 24\'\'', 6, 6000000, 'https://fullhogar.com.co/cdn/shop/files/50UT7300PSA.AWCQ-3.jpg?v=1718818028', 878923),
-(19, 'LGK61 CELULAR', 10, 800000, 'https://www.clevercel.co/cdn/shop/products/lg-k61-2.jpg?v=1746826035', 878923);
+INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`, `marca`, `categoría`) VALUES
+(17, 'Arroz', 78, 3900, 'https://exitocol.vteximg.com.br/arquivos/ids/27182455/Arroz-Blanco-Bolsa-X-3000g-130407_a.jpg', 3, 5),
+(18, 'Televisor 24\'\'', 6, 6000000, 'https://fullhogar.com.co/cdn/shop/files/50UT7300PSA.AWCQ-3.jpg?v=1718818028', 1, 1),
+(20, 'CARRAZO', 3, 6000000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS6G59YqQb8j9NhGKxGDHRLm4296H5QRhO5g&s', 2, 4);
 
 --
 -- Disparadores `productoenty`
@@ -246,6 +299,12 @@ INSERT INTO `usuarioenty` (`id_usuario`, `nombre_usuario`, `email`, `contrasena_
 --
 
 --
+-- Indices de la tabla `categoriaenty`
+--
+ALTER TABLE `categoriaenty`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `compraenty`
 --
 ALTER TABLE `compraenty`
@@ -270,6 +329,12 @@ ALTER TABLE `detallepedido`
   ADD KEY `id_producto` (`id_producto`);
 
 --
+-- Indices de la tabla `marcaenty`
+--
+ALTER TABLE `marcaenty`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `pedidoenty`
 --
 ALTER TABLE `pedidoenty`
@@ -281,7 +346,8 @@ ALTER TABLE `pedidoenty`
 --
 ALTER TABLE `productoenty`
   ADD PRIMARY KEY (`id_producto`),
-  ADD KEY `fk_producto_proveedor` (`id_proveedor`);
+  ADD KEY `FK2` (`categoría`),
+  ADD KEY `FK1` (`marca`);
 
 --
 -- Indices de la tabla `proveedorenty`
@@ -302,34 +368,46 @@ ALTER TABLE `usuarioenty`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `categoriaenty`
+--
+ALTER TABLE `categoriaenty`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT de la tabla `compraenty`
 --
 ALTER TABLE `compraenty`
-  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+
+--
+-- AUTO_INCREMENT de la tabla `marcaenty`
+--
+ALTER TABLE `marcaenty`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidoenty`
 --
 ALTER TABLE `pedidoenty`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT de la tabla `productoenty`
 --
 ALTER TABLE `productoenty`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarioenty`
@@ -372,7 +450,8 @@ ALTER TABLE `pedidoenty`
 -- Filtros para la tabla `productoenty`
 --
 ALTER TABLE `productoenty`
-  ADD CONSTRAINT `fk_producto_proveedor` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedorenty` (`id_proveedor`) ON DELETE SET NULL;
+  ADD CONSTRAINT `FK1` FOREIGN KEY (`marca`) REFERENCES `marcaenty` (`id`),
+  ADD CONSTRAINT `FK2` FOREIGN KEY (`categoría`) REFERENCES `categoriaenty` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

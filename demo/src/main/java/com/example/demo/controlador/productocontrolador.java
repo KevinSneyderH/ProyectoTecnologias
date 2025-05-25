@@ -9,7 +9,11 @@ import org.springframework.stereotype.Controller;
 import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
+import com.example.demo.entidad.categoriaenty;
+import com.example.demo.entidad.marcaenty;
+import com.example.demo.repositorio.categoriarepositorio;
 import com.example.demo.repositorio.detallecomprarepositorio;
+import com.example.demo.repositorio.marcarepositorio;
 import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.proveedorrepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
@@ -39,6 +43,12 @@ public class productocontrolador {
     @Autowired
     public proveedorrepositorio proveedorServicio;
 
+    @Autowired
+    public marcarepositorio marcaservicio;
+
+    @Autowired
+    public categoriarepositorio categoriaservicio;
+
     @GetMapping("/Productos")
     public String mostrarPaginaProductos(Model model, HttpServletResponse response, Authentication authentication) {
         // Desactiva caché
@@ -57,9 +67,11 @@ public class productocontrolador {
         List<productoenty> listaProductos = productoservicio.findAll();
         model.addAttribute("listaProductos", listaProductos);
 
-        // Agrega esta línea:
-        List<proveedorenty> proveedores = proveedorServicio.findAll();
-        model.addAttribute("proveedores", proveedores);
+       List<marcaenty> listaMarcas = marcaservicio.findAll();
+        model.addAttribute("listaMarcas", listaMarcas);
+
+        List<categoriaenty> listaCategorias = categoriaservicio.findAll();
+        model.addAttribute("listaCategorias", listaCategorias);
 
         return "productos";
     }
@@ -78,19 +90,14 @@ public class productocontrolador {
     public String editarProducto(
             @RequestParam int id_producto,
             @RequestParam String nombre,
-            @RequestParam int cantidad_en_stock,
             @RequestParam double precio_venta_unitario,
-            @RequestParam String url_imagen,
-            @RequestParam("proveedorId") Integer proveedorId) {
+            @RequestParam String url_imagen) {
         try {
             productoenty producto = productoservicio.findById(id_producto).orElse(null);
             if (producto != null) {
                 producto.setNombre(nombre);
-                producto.setCantidad_en_stock(cantidad_en_stock);
                 producto.setPrecio_venta_unitario(precio_venta_unitario);
                 producto.setUrl_imagen(url_imagen);
-                proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElse(null);
-                producto.setProveedor(proveedor);
                 productoservicio.save(producto);
             }
         } catch (Exception e) {
@@ -101,10 +108,7 @@ public class productocontrolador {
 
     @PostMapping("/insertProducto")
     public String insertProducto(
-            @Validated productoenty objProducto,
-            @RequestParam("proveedorId") Integer proveedorId) {
-        proveedorenty proveedor = proveedorServicio.findById(proveedorId).orElse(null);
-        objProducto.setProveedor(proveedor);
+            @Validated productoenty objProducto) {
         productoservicio.save(objProducto);
         return "redirect:/Productos";
     }

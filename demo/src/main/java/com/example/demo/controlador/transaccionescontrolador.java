@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.entidad.detallePedido;
 import com.example.demo.entidad.detallecompra;
+import com.example.demo.entidad.productoenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.detallecomprarepositorio;
 import com.example.demo.repositorio.detallepedidorepositorio;
+import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
 
 import org.springframework.ui.Model;
@@ -25,6 +27,9 @@ public class transaccionescontrolador {
 
     @Autowired
     private detallecomprarepositorio detalleCompraService;
+
+    @Autowired
+    public productorepositorio productoservicio;
 
     @Autowired
     private detallepedidorepositorio detallePedidoService;
@@ -54,15 +59,14 @@ public class transaccionescontrolador {
         // Procesar compras
         for (detallecompra compra : compras) {
             Map<String, Object> t = new HashMap<>();
-            t.put("fecha", compra.getCompra().getFecha().toString()); // Si tienes fecha, cámbiala aquí
+            t.put("fecha", compra.getCompra().getFecha().toString());
             t.put("tipo", "Compra");
-            t.put("cantidad", compra.getCantidad()); // Si tienes cantidad, cámbiala aquí
-            t.put("costoUnitario", compra.getPrecio_compra_proveedor()); // Si tienes costo, cámbiala aquí
+            t.put("cantidad", compra.getCantidad());
+            t.put("costoUnitario", compra.getPrecio_compra_proveedor());
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
+            t.put("idProducto", compra.getIdProducto() != null ? compra.getIdProducto().getId_producto() : ""); // <--- AGREGA ESTA LÍNEA
             t.put("usuario",
-                    compra.getCompra() != null ? compra.getCompra().getUsuario().getNombreUsuario() : ""); // Completa
-            // Completa
-
+                    compra.getCompra() != null ? compra.getCompra().getUsuario().getNombreUsuario() : "");
             transacciones.add(t);
         }
 
@@ -73,21 +77,24 @@ public class transaccionescontrolador {
             if (pedido.getIdPedido() != null && pedido.getIdPedido().getFechaCreacion() != null) {
                 fecha = pedido.getIdPedido().getFechaCreacion().toString();
             }
-            t.put("fecha", fecha); // Si tienes fecha, cámbiala aquí
+            t.put("fecha", fecha);
             t.put("tipo", "Pedido");
             t.put("cantidad", pedido.getCantidadSolicitada());
             t.put("costoUnitario", pedido.getPrecioTotalCompra());
             t.put("producto", pedido.getIdProducto() != null ? pedido.getIdProducto().getNombre() : "");
-            t.put("usuario",
-                    pedido.getIdPedido() != null ? pedido.getIdPedido().getIdUsuario().getNombreUsuario() : ""); // Completa
-                                                                                                                 // si
-                                                                                                                 // tienes
-                                                                                                                 // usuario
-                                                                                                                 // relacionado
+            t.put("idProducto", pedido.getIdProducto() != null ? pedido.getIdProducto().getId_producto() : ""); // <--- AGREGA ESTA LÍNEA
+            t.put("usuario",pedido.getIdPedido() != null ? pedido.getIdPedido().getIdUsuario().getNombreUsuario() : "");
+                    
             transacciones.add(t);
         }
 
         model.addAttribute("transacciones", transacciones);
+
+        List<productoenty> listproducto = productoservicio.findAll();
+        model.addAttribute("listproducto", listproducto);
+
+        List<usuarioenty> listusuario = usuarioservicio.findAll();
+        model.addAttribute("listusuario", listusuario);
 
         return "transacciones"; // Si no está autenticado, puede ver el formulario de login
     }

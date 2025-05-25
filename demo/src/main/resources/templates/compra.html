@@ -31,7 +31,6 @@
             <button onclick="location.href='/Pedidos'" class="nav-button">Pedidos</button>
             <button class="nav-button active">Compras</button>
             <button onclick="location.href='/Transacciones'" class="nav-button">Transacciones</button>
-            <button class="nav-button">Informes</button>
         </aside>
         <main>
             <div class="dashboard">
@@ -55,8 +54,6 @@
                                 <tbody>
                                     <tr th:each="compra : ${compras}">
                                         <td th:text="${compra.fecha}">-</td>
-
-
                                         <td
                                             th:text="'$' + ${#numbers.formatDecimal(compra.costoTotal, 1, 'COMMA', 2, 'POINT')}">
                                         </td>
@@ -85,12 +82,7 @@
                         <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Registrar compra</h2>
                         <form id="crearCompraForm">
-                            <label for="proveedorId"><strong>Proveedor:</strong></label>
-                            <select name="proveedorId" id="proveedorId" required>
-                                <option value="" disabled selected>Seleccione un proveedor</option>
-                                <option th:each="prov : ${proveedores}" th:value="${prov.id_proveedor}"
-                                    th:text="${prov.nombre_empresa}"></option>
-                            </select>
+                            
                             <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
                             <table>
                                 <thead>
@@ -103,8 +95,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="prod : ${productos}"
-                                        th:attr="data-proveedor-id=${prod.proveedor != null ? prod.proveedor.id_proveedor : ''}">
+                                    <tr th:each="prod : ${productos}">
                                         <td th:text="${prod.nombre}"></td>
                                         <td>
                                             <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
@@ -165,17 +156,14 @@
                         const modalCompra = document.getElementById("compraModal");
                         const closeBtnCompra = modalCompra ? modalCompra.querySelector(".close") : null;
                         const cancelCompraBtn = document.getElementById("cancelCompraBtn");
+                        const searchInput = document.getElementById('searchInput');
 
                         // Abrir modal
                         if (openBtnCompra) {
                             openBtnCompra.onclick = () => {
                                 modalCompra.classList.add("show");
-                                // Oculta todos los productos
-                                document.querySelectorAll('#crearCompraForm tbody tr').forEach(row => {
-                                    row.style.display = 'none';
-                                });
-                                // Limpia la selección de proveedor
-                                proveedorSelect.selectedIndex = 0;
+                               
+                                
                                 document.querySelectorAll('.cantidad-input').forEach(input => {
                                     input.addEventListener('input', actualizarTotales);
                                 });
@@ -204,43 +192,7 @@
                             document.getElementById("totalCompra").textContent = total.toFixed(2);
                         }
 
-                        // Filtro de productos
-                        const searchInput = document.getElementById('searchInput');
-                        if (searchInput) {
-                            searchInput.addEventListener('input', function () {
-                                const filtro = this.value.toLowerCase();
-                                document.querySelectorAll('#crearCompraForm tbody tr').forEach(row => {
-                                    const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
-                                    row.style.display = nombre.includes(filtro) ? '' : 'none';
-                                });
-                            });
-                        }
-
-                        // Filtro combinado de proveedor y búsqueda
-                        const proveedorSelect = document.getElementById('proveedorId');
-
-                        function filtrarProductos() {
-                            const proveedorId = proveedorSelect.value;
-                            const filtro = searchInput.value.toLowerCase();
-
-                            document.querySelectorAll('#crearCompraForm tbody tr').forEach(row => {
-                                const rowProveedorId = row.getAttribute('data-proveedor-id');
-                                const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
-                                // Solo muestra si es del proveedor seleccionado Y coincide con el filtro de búsqueda
-                                if (proveedorId === rowProveedorId && nombre.includes(filtro)) {
-                                    row.style.display = '';
-                                } else {
-                                    row.style.display = 'none';
-                                }
-                            });
-                        }
-
-                        if (proveedorSelect) {
-                            proveedorSelect.addEventListener('change', filtrarProductos);
-                        }
-                        if (searchInput) {
-                            searchInput.addEventListener('input', filtrarProductos);
-                        }
+                        
 
                         // Validación y envío del formulario
                         document.getElementById("crearCompraForm").onsubmit = function (e) {
@@ -320,7 +272,27 @@
                         window.onclick = (event) => {
                             if (event.target === detalleCompraModal) detalleCompraModal.classList.remove('show');
                         };
+
+                        // Filtrar productos
+                        function filtrarProductos() {
+                            const query = searchInput.value.toLowerCase();
+                            document.querySelectorAll("#crearCompraForm tbody tr").forEach(row => {
+                                const productoNombre = row.querySelector('td').textContent.toLowerCase();
+                                if (productoNombre.includes(query)) {
+                                    row.style.display = "";
+                                } else {
+                                    row.style.display = "none";
+                                }
+                            });
+                        }
+
+                        if (searchInput) {
+                            searchInput.addEventListener('input', filtrarProductos);
+                        }
                     });
+
+
+
                 </script>
             </div>
         </main>

@@ -16,13 +16,18 @@ public class productoenty {
     private double precio_venta_unitario;
     private String url_imagen;
 
+    @ManyToOne
+    @JoinColumn(name = "marca")
+    private marcaenty idmarca;
+
+    @ManyToOne
+    @JoinColumn(name = "categoría")
+    private categoriaenty idcategoria;
+
     @OneToMany(mappedBy = "idProducto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<detallecompra> detallesCompra;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "id_proveedor", nullable = true)
-    private proveedorenty proveedor;
-
+    
     public productoenty() {
     }
 
@@ -85,12 +90,22 @@ public class productoenty {
         this.detallesCompra = detallesCompra;
     }
 
-    public proveedorenty getProveedor() {
-        return proveedor;
+    public marcaenty getIdmarca() {
+        return idmarca;
     }
 
-    public void setProveedor(proveedorenty proveedor) {
-        this.proveedor = proveedor;
+    public void setIdmarca(marcaenty idmarca) {
+        this.idmarca = idmarca;
     }
+
+    public categoriaenty getIdcategoria() {
+        return idcategoria;
+    }
+
+    public void setIdcategoria(categoriaenty idcategoria) {
+        this.idcategoria = idcategoria;
+    }
+
+  
 
 }

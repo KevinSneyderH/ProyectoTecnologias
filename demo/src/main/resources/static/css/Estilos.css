@@ -473,9 +473,9 @@ th {
 }
 
 /* Estilo para el select de proveedores */
-select[name="proveedorId"],
+select[name="Select"],
 select#proveedorEdit {
-    width: 100%;
+    width:100%;
     padding: 8px 12px;
     border: 1px solid #bfc9d1;
     border-radius: 6px;
@@ -486,7 +486,27 @@ select#proveedorEdit {
     transition: border-color 0.2s;
 }
 
-select[name="proveedorId"]:focus,
+select[name="Select"]:focus,
+select#proveedorEdit:focus {
+    border-color: #007bff;
+    outline: none;
+    background: #fff;
+}
+
+select[name="Selectfiltos"],
+select#proveedorEdit {
+    width: 20%;
+    padding: 8px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 6px;
+    background: #f7fafc;
+    color: #222;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+select[name="Selectfiltos"]:focus,
 select#proveedorEdit:focus {
     border-color: #007bff;
     outline: none;
@@ -527,6 +547,36 @@ select#proveedorEdit:focus {
         position: absolute;
         height: 100vh;
         z-index: 1000;
+    }
+
+    .filtros {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filtros select,
+    .filtros button {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .filtros button {
+        cursor: pointer;
+    }
+
+    .buscar {
+        background-color: #e6f2ec;
+        border: 2px solid #81c7a2;
+    }
+
+    .limpiar {
+        background-color: #fbeaea;
+        border: 2px solid #e09999;
     }
 
 }
