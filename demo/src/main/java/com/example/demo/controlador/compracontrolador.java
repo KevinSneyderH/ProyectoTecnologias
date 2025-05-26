@@ -19,6 +19,8 @@ import com.example.demo.repositorio.productorepositorio;
 import com.example.demo.repositorio.proveedorrepositorio;
 import com.example.demo.repositorio.usuariorepositorio;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 public class compracontrolador {
 
@@ -41,11 +43,19 @@ public class compracontrolador {
     public categoriarepositorio categoriaservicio;
 
     @GetMapping("/Compras")
-    public String mostrarCompras(Model model, Authentication authentication) {
-        // Usuario y rol
+    public String mostrarCompras(Model model, HttpServletResponse response, Authentication authentication) {
+        // Desactiva caché
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // Proxies
+        // Obtener el nombre de usuario desde la autenticación
         String nombreUsuario = authentication.getName();
-        model.addAttribute("nombreUsuario", nombreUsuario);
-        model.addAttribute("rolUsuario", "Empleado"); // Ajusta según tu lógica
+
+        // Buscar el usuario en la base de datos
+        usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
+
+        model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
+        model.addAttribute("rolUsuario", usuario.getRol());
 
         // Listado de compras y productos
         List<compraenty> compras = compraServicio.findAll();
