@@ -121,19 +121,19 @@
 
         let nombres = [
             /*[# th:each="p : ${productosBajoStock}"]*/
-            '[[${p.nombre}]]',
+            '[[${ p.nombre }]]',
             /*[/]*/
         ];
 
         let cantidades = [
             /*[# th:each="p : ${productosBajoStock}"]*/
-            "[[${ p.cantidad_en_stock }]]",
+            '[[${ p.cantidad_en_stock }]]',
             /*[/]*/
         ];
 
         let precios = [
             /*[# th:each="p : ${productosBajoStock}"]*/
-            "[[${ p.precio_venta_unitario }]]",
+            '[[${ p.precio_venta_unitario}]]',
             /*[/]*/
         ];
 

@@ -11,7 +11,6 @@ import com.example.demo.entidad.categoriaenty;
 import com.example.demo.entidad.compraenty;
 import com.example.demo.entidad.detallecompra;
 import com.example.demo.entidad.productoenty;
-import com.example.demo.entidad.proveedorenty;
 import com.example.demo.entidad.usuarioenty;
 import com.example.demo.repositorio.categoriarepositorio;
 import com.example.demo.repositorio.comprarepositorio;
@@ -56,9 +55,6 @@ public class compracontrolador {
         List<productoenty> productos = productoServicio.findAll();
         model.addAttribute("productos", productos);
 
-        List<proveedorenty> proveedores = proveedorServicio.findAll();
-        model.addAttribute("proveedores", proveedores);
-
         List<categoriaenty> categorias = categoriaservicio.findAll();
         model.addAttribute("categorias", categorias);
 
@@ -96,7 +92,6 @@ public class compracontrolador {
                 detalle.setIdProducto(producto);
                 detalle.setCantidad(cantidad);
                 detalle.setPrecio_compra_proveedor(subtotal);
-
                 detalleCompraServicio.save(detalle);
 
                 // Actualizar stock

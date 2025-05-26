@@ -74,8 +74,14 @@ public class pedidocontrolador {
         String nombreUsuario = authentication.getName();
         usuarioenty usuario = usuarioservicio.findByNombreUsuario(nombreUsuario);
 
-        // 1. Calcular el total del pedido
         double totalPedido = 0;
+        pedidoenty pedido = new pedidoenty();
+        pedido.setIdUsuario(usuario);
+        pedido.setFechaCreacion(new java.sql.Timestamp(System.currentTimeMillis()));
+        pedido.setEstadopedido("Pendiente");
+        pedido.setCostototal(0);
+        pedido = pedidoservicio.save(pedido);
+
         for (int i = 0; i < productoIds.size(); i++) {
             int cantidad = cantidades.get(i);
             if (cantidad > 0) {
@@ -83,26 +89,8 @@ public class pedidocontrolador {
                 double precioUnitario = producto.getPrecio_venta_unitario();
                 double subtotal = cantidad * precioUnitario;
                 totalPedido += subtotal;
-            }
-        }
-
-        // 2. Crear el pedido con el total
-        pedidoenty pedido = new pedidoenty();
-        pedido.setIdUsuario(usuario);
-        pedido.setFechaCreacion(new java.sql.Timestamp(System.currentTimeMillis()));
-        pedido.setEstadopedido("Pendiente");
-        pedido.setCostototal(totalPedido);
-        pedido = pedidoservicio.save(pedido);
-
-        // 3. Crear los detalles con su subtotal y actualizar stock
-        for (int i = 0; i < productoIds.size(); i++) {
-            int cantidad = cantidades.get(i);
-            if (cantidad > 0) {
-                productoenty producto = productoservicio.findById(productoIds.get(i)).orElseThrow();
-                double precioUnitario = producto.getPrecio_venta_unitario();
-                double subtotal = cantidad * precioUnitario;
-
                 // Crear detalle del pedido
+
                 detallePedido detalle = new detallePedido();
                 detalle.setIdPedido(pedido);
                 detalle.setIdProducto(producto);
@@ -116,6 +104,9 @@ public class pedidocontrolador {
                 productoservicio.save(producto);
             }
         }
+
+        pedido.setCostototal(totalPedido);
+        pedidoservicio.save(pedido);
 
         Map<String, Object> response = new HashMap<>();
         response.put("id_pedido", pedido.getId_pedido());
@@ -137,6 +128,7 @@ public class pedidocontrolador {
             responseDetalles.add(det);
             total += d.getPrecioTotalCompra();
         }
+
         Map<String, Object> response = new HashMap<>();
         response.put("detalles", responseDetalles);
         response.put("total", total);
