@@ -84,3 +84,7 @@ function limpiarFiltros() {
   }
 }
 
+document.querySelector('.toggle-sidebar-btn').onclick = function () {
+  document.getElementById('sidebar').classList.toggle('hidden');
+};
+

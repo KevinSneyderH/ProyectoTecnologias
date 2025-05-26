@@ -10,305 +10,296 @@
 </head>
 
 <body>
-    <div th:replace="fragments :: layout('Pedidos', ~{::main})"></div>
-    <main>
+    <div th:replace="fragments :: layout('Pedidos', ~{::main})">
+        <main>
 
 
-        <div class="dashboard">
-            <div class="card">
+            <div class="dashboard">
                 <div class="card">
-                    <div class="top-actions">
-                        <button id="openModalBtnPedido">Crear Pedido</button>
-                    </div>
+                    <div class="card">
+                        <div class="top-actions">
+                            <button id="openModalBtnPedido">Crear Pedido</button>
+                        </div>
 
 
-                    <h3>Pedidos</h3>
-                    <div class="table-container">
-                        <table id="productTable">
-                            <thead>
-                                <tr>
-                                    <th>Fecha Creacion</th>
-                                    <th>Costo Total</th>
-                                    <th>Estado</th>
-                                    <th>Empleado Encargado</th>
-                                    <th>Detalle Pedido</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="pedido : ${pedidos}">
-                                    <td th:text="${pedido.fechaCreacion}">-</td>
-                                    <td
-                                        th:text="'$' + ${#numbers.formatDecimal(pedido.costototal, 1, 'COMMA', 2, 'POINT')}">
-                                    </td>
-                                    <td th:text="${pedido.estadopedido}">-</td>
-                                    <td th:text="${pedido.idUsuario.nombreUsuario}">-</td>
-                                    <td>
-                                        <div class="top-actions">
-                                            <button type="button" class="detalle-pedido-btn"
-                                                th:attr="data-pedido-id=${pedido.id_pedido}">
-                                                Detalle Pedido
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
+                        <h3>Pedidos</h3>
+                        <div class="table-container">
+                            <table id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha Creacion</th>
+                                        <th>Costo Total</th>
+                                        <th>Estado</th>
+                                        <th>Empleado Encargado</th>
+                                        <th>Detalle Pedido</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="pedido : ${pedidos}">
+                                        <td th:text="${pedido.fechaCreacion}">-</td>
+                                        <td
+                                            th:text="'$' + ${#numbers.formatDecimal(pedido.costototal, 1, 'COMMA', 2, 'POINT')}">
+                                        </td>
+                                        <td th:text="${pedido.estadopedido}">-</td>
+                                        <td th:text="${pedido.idUsuario.nombreUsuario}">-</td>
+                                        <td>
+                                            <div class="top-actions">
+                                                <button type="button" class="detalle-pedido-btn"
+                                                    th:attr="data-pedido-id=${pedido.id_pedido}">
+                                                    Detalle Pedido
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
 
-                        </table>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
-            <!-- Modal para crear pedido -->
-            <div id="pedidoModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" style="cursor:pointer;">&times;</span>
-                    <h2>Crear pedido</h2>
-                    <form id="crearPedidoForm">
-                        <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
+                <!-- Modal para crear pedido -->
+                <div id="pedidoModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" style="cursor:pointer;">&times;</span>
+                        <h2>Crear pedido</h2>
+                        <form id="crearPedidoForm">
+                            <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio unidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="prod : ${productos}">
+                                        <td th:text="${prod.nombre}"></td>
+                                        <td>
+                                            <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
+                                            <input type="number" min="0" name="cantidades"
+                                                th:data-precio-unitario="${prod.precio_venta_unitario}"
+                                                th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
+                                                class="cantidad-input">
+                                        </td>
+                                        <td
+                                            th:text="'$' + ${#numbers.formatDecimal(prod.precio_venta_unitario, 1, 'COMMA', 2, 'POINT')}">
+                                        </td>
+                                        <td class="subtotal-cell">$0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                                <strong>Total: $<span id="totalPedido">0</span></strong>
+                            </div>
+                            <div class="top-actions">
+                                <button type="button" id="cancelPedidoBtn">Cancelar</button>
+                                <button type="submit">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- AQUÍ, fuera de main y de cualquier div -->
+                <div id="detallePedidoModal" class="modal">
+                    <div class="modal-content">
+                        <span class="closeEdit" style="cursor:pointer;">&times;</span>
+                        <h2>Detalle del Pedido</h2>
                         <table>
                             <thead>
                                 <tr>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
-                                    <th>Precio unidad</th>
-                                    <th>Total</th>
+                                    <th>Subtotal</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr th:each="prod : ${productos}">
-                                    <td th:text="${prod.nombre}"></td>
-                                    <td>
-                                        <input type="hidden" name="productoIds" th:value="${prod.id_producto}">
-                                        <input type="number" min="0" name="cantidades"
-                                            th:data-precio-unitario="${prod.precio_venta_unitario}"
-                                            th:attr="data-stock=${prod.cantidad_en_stock}" value="0"
-                                            class="cantidad-input">
-                                    </td>
-                                    <td
-                                        th:text="'$' + ${#numbers.formatDecimal(prod.precio_venta_unitario, 1, 'COMMA', 2, 'POINT')}">
-                                    </td>
-                                    <td class="subtotal-cell">$0</td>
-                                </tr>
+                            <tbody id="detallePedidoBody">
+                                <!-- Aquí se llenan los detalles -->
                             </tbody>
                         </table>
-                        <div>
-                            <strong>Total: $<span id="totalPedido">0</span></strong>
+                        <div style="margin-top: 1rem;">
+                            <strong>Total Pedido: $<span id="total">0.00</span></strong>
                         </div>
-                        <div class="top-actions">
-                            <button type="button" id="cancelPedidoBtn">Cancelar</button>
-                            <button type="submit">Guardar</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-            <!-- AQUÍ, fuera de main y de cualquier div -->
-            <div id="detallePedidoModal" class="modal">
-                <div class="modal-content">
-                    <span class="closeEdit" style="cursor:pointer;">&times;</span>
-                    <h2>Detalle del Pedido</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detallePedidoBody">
-                            <!-- Aquí se llenan los detalles -->
-                        </tbody>
-                    </table>
-                    <div style="margin-top: 1rem;">
-                        <strong>Total Pedido: $<span id="total">0.00</span></strong>
                     </div>
                 </div>
-            </div>
 
-            <script>
+                <script>
 
+                    // Modal Crear Pedido
+                    const openBtnPedido = document.getElementById("openModalBtnPedido");
+                    const modalPedido = document.getElementById("pedidoModal");
+                    const closeBtnPedido = document.querySelector(".close");
+                    const cancelPedidoBtn = document.getElementById("cancelPedidoBtn");
 
-                function toggleSidebar() {
-                    const sidebar = document.getElementById('sidebar');
-                    sidebar.classList.toggle('hidden');
-                }
-                // Modal Crear Pedido
-                const openBtnPedido = document.getElementById("openModalBtnPedido");
-                const modalPedido = document.getElementById("pedidoModal");
-                const closeBtnPedido = document.querySelector(".close");
-                const cancelPedidoBtn = document.getElementById("cancelPedidoBtn");
+                    // Modal Agregar Producto
+                    const modalAgregarProducto = document.getElementById("agregarProductoModal");
+                    const closeBtnAgregarProducto = document.querySelector(".closeEdit ");
+                    const cancelAgregarProductoBtn = document.getElementById("cancelAgregarProductoBtn");
 
-                // Modal Agregar Producto
-                const modalAgregarProducto = document.getElementById("agregarProductoModal");
-                const closeBtnAgregarProducto = document.querySelector(".closeEdit ");
-                const cancelAgregarProductoBtn = document.getElementById("cancelAgregarProductoBtn");
+                    // Abrir modal crear pedido
+                    if (openBtnPedido) openBtnPedido.onclick = () => {
+                        modalPedido.classList.add("show");
+                        document.querySelectorAll('.cantidad-input').forEach(input => {
+                            input.addEventListener('input', actualizarTotales);
+                        });
+                        actualizarTotales();
+                    };
+                    if (closeBtnPedido) closeBtnPedido.onclick = () => modalPedido.classList.remove("show");
+                    if (cancelPedidoBtn) cancelPedidoBtn.onclick = () => modalPedido.classList.remove("show");
 
-                // Abrir modal crear pedido
-                if (openBtnPedido) openBtnPedido.onclick = () => {
-                    modalPedido.classList.add("show");
+                    // Abrir modal agregar producto (solo manualmente o después de crear pedido)
+                    if (closeBtnAgregarProducto) closeBtnAgregarProducto.onclick = () => modalAgregarProducto.classList.remove("show");
+                    if (cancelAgregarProductoBtn) cancelAgregarProductoBtn.onclick = () => modalAgregarProducto.classList.remove("show");
+
+                    // Cerrar modales al hacer clic fuera
+                    window.onclick = (event) => {
+                        if (event.target === modalPedido) modalPedido.classList.remove("show");
+                        if (event.target === modalAgregarProducto) modalAgregarProducto.classList.remove("show");
+                    };
+
+                    // ...código existente...
+                    document.getElementById("crearPedidoForm").onsubmit = function (e) {
+                        e.preventDefault();
+                        let algunaCantidad = false;
+                        let stockSuficiente = true;
+                        let mensajeError = "";
+
+                        document.querySelectorAll('.cantidad-input').forEach(input => {
+                            const cantidad = parseInt(input.value) || 0;
+                            const stock = parseInt(input.getAttribute('data-stock')) || 0;
+                            // Obtén el nombre del producto desde la fila
+                            const nombreProducto = input.closest('tr').querySelector('td').textContent.trim();
+
+                            if (cantidad > 0) {
+                                algunaCantidad = true;
+                                if (cantidad > stock) {
+                                    stockSuficiente = false;
+                                    mensajeError += `No hay suficiente stock para "${nombreProducto}" (stock disponible: ${stock}).\n`;
+                                }
+                            }
+                            if (stock === 0 && cantidad > 0) {
+                                stockSuficiente = false;
+                                mensajeError += `El producto "${nombreProducto}" no tiene existencias.\n`;
+                            }
+                        });
+
+                        if (!algunaCantidad) {
+                            alert("Debes ingresar al menos un producto.");
+                            return;
+                        }
+                        if (!stockSuficiente) {
+                            alert(mensajeError);
+                            return;
+                        }
+
+                        const form = e.target;
+                        fetch('/insertped', {
+                            method: 'POST',
+                            body: new FormData(form)
+                        })
+                            .then(response => {
+                                if (!response.ok) throw new Error("Network response was not ok");
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    alert("Pedido creado con éxito");
+                                    window.location.href = "/Pedidos";
+                                } else {
+                                    alert("Error al crear pedido");
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert("Error al crear pedido");
+                            });
+                    };
+
+                    // Cuando envíes el formulario de agregar producto, usa el id del pedido guardado
+                    document.getElementById("agregarProductoForm").onsubmit = function (e) {
+                        e.preventDefault();
+                        const form = e.target;
+                        const pedidoId = form.dataset.pedidoId;
+                        const action = `/Pedidos/${pedidoId}/agregar-productos`;
+                        fetch(action, {
+                            method: 'POST',
+                            body: new FormData(form)
+                        })
+                            .then(() => {
+                                modalAgregarProducto.classList.remove("show");
+
+                            })
+                            .catch(err => alert("Error al agregar producto"));
+                    };
+
+                    // Actualiza subtotales y total al cambiar cantidades
                     document.querySelectorAll('.cantidad-input').forEach(input => {
                         input.addEventListener('input', actualizarTotales);
                     });
-                    actualizarTotales();
-                };
-                if (closeBtnPedido) closeBtnPedido.onclick = () => modalPedido.classList.remove("show");
-                if (cancelPedidoBtn) cancelPedidoBtn.onclick = () => modalPedido.classList.remove("show");
 
-                // Abrir modal agregar producto (solo manualmente o después de crear pedido)
-                if (closeBtnAgregarProducto) closeBtnAgregarProducto.onclick = () => modalAgregarProducto.classList.remove("show");
-                if (cancelAgregarProductoBtn) cancelAgregarProductoBtn.onclick = () => modalAgregarProducto.classList.remove("show");
-
-                // Cerrar modales al hacer clic fuera
-                window.onclick = (event) => {
-                    if (event.target === modalPedido) modalPedido.classList.remove("show");
-                    if (event.target === modalAgregarProducto) modalAgregarProducto.classList.remove("show");
-                };
-
-                // ...código existente...
-                document.getElementById("crearPedidoForm").onsubmit = function (e) {
-                    e.preventDefault();
-                    let algunaCantidad = false;
-                    let stockSuficiente = true;
-                    let mensajeError = "";
-
-                    document.querySelectorAll('.cantidad-input').forEach(input => {
-                        const cantidad = parseInt(input.value) || 0;
-                        const stock = parseInt(input.getAttribute('data-stock')) || 0;
-                        // Obtén el nombre del producto desde la fila
-                        const nombreProducto = input.closest('tr').querySelector('td').textContent.trim();
-
-                        if (cantidad > 0) {
-                            algunaCantidad = true;
-                            if (cantidad > stock) {
-                                stockSuficiente = false;
-                                mensajeError += `No hay suficiente stock para "${nombreProducto}" (stock disponible: ${stock}).\n`;
-                            }
-                        }
-                        if (stock === 0 && cantidad > 0) {
-                            stockSuficiente = false;
-                            mensajeError += `El producto "${nombreProducto}" no tiene existencias.\n`;
-                        }
-                    });
-
-                    if (!algunaCantidad) {
-                        alert("Debes ingresar al menos un producto.");
-                        return;
-                    }
-                    if (!stockSuficiente) {
-                        alert(mensajeError);
-                        return;
-                    }
-
-                    const form = e.target;
-                    fetch('/insertped', {
-                        method: 'POST',
-                        body: new FormData(form)
-                    })
-                        .then(response => {
-                            if (!response.ok) throw new Error("Network response was not ok");
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                alert("Pedido creado con éxito");
-                                window.location.href = "/Pedidos";
-                            } else {
-                                alert("Error al crear pedido");
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert("Error al crear pedido");
+                    function actualizarTotales() {
+                        let total = 0;
+                        document.querySelectorAll('.cantidad-input').forEach((input, idx) => {
+                            const precio = parseFloat(input.dataset.precioUnitario);
+                            const cantidad = parseInt(input.value) || 0;
+                            const subtotal = precio * cantidad;
+                            input.closest('tr').querySelector('.subtotal-cell').textContent = '$' + subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 });
+                            total += subtotal;
                         });
-                };
-
-                // Cuando envíes el formulario de agregar producto, usa el id del pedido guardado
-                document.getElementById("agregarProductoForm").onsubmit = function (e) {
-                    e.preventDefault();
-                    const form = e.target;
-                    const pedidoId = form.dataset.pedidoId;
-                    const action = `/Pedidos/${pedidoId}/agregar-productos`;
-                    fetch(action, {
-                        method: 'POST',
-                        body: new FormData(form)
-                    })
-                        .then(() => {
-                            modalAgregarProducto.classList.remove("show");
-
-                        })
-                        .catch(err => alert("Error al agregar producto"));
-                };
-
-                // Actualiza subtotales y total al cambiar cantidades
-                document.querySelectorAll('.cantidad-input').forEach(input => {
-                    input.addEventListener('input', actualizarTotales);
-                });
-
-                function actualizarTotales() {
-                    let total = 0;
-                    document.querySelectorAll('.cantidad-input').forEach((input, idx) => {
-                        const precio = parseFloat(input.dataset.precioUnitario);
-                        const cantidad = parseInt(input.value) || 0;
-                        const subtotal = precio * cantidad;
-                        input.closest('tr').querySelector('.subtotal-cell').textContent = '$' + subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 });
-                        total += subtotal;
-                    });
-                    document.getElementById('totalPedido').textContent = total.toLocaleString('es-CO', { minimumFractionDigits: 2 });
-                }
-            </script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    document.querySelectorAll('.detalle-pedido-btn').forEach(btn => {
-                        btn.onclick = function () {
-                            const pedidoId = btn.getAttribute('data-pedido-id');
-                            fetch(`/api/pedidos/${pedidoId}/detalles`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    const detalles = data.detalles;
-                                    const total = data.total;
-                                    const tbody = document.getElementById('detallePedidoBody');
-                                    tbody.innerHTML = '';
-                                    detalles.forEach(det => {
-                                        const tr = document.createElement('tr');
-                                        tr.innerHTML = `
+                        document.getElementById('totalPedido').textContent = total.toLocaleString('es-CO', { minimumFractionDigits: 2 });
+                    }
+                </script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.querySelectorAll('.detalle-pedido-btn').forEach(btn => {
+                            btn.onclick = function () {
+                                const pedidoId = btn.getAttribute('data-pedido-id');
+                                fetch(`/api/pedidos/${pedidoId}/detalles`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        const detalles = data.detalles;
+                                        const total = data.total;
+                                        const tbody = document.getElementById('detallePedidoBody');
+                                        tbody.innerHTML = '';
+                                        detalles.forEach(det => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = `
                                                 <td>${det.productoNombre}</td>
                                                 <td>${det.cantidadSolicitada}</td>
                                                 <td>$${det.subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</td>
                                             `;
-                                        tbody.appendChild(tr);
+                                            tbody.appendChild(tr);
+                                        });
+                                        document.getElementById('total').textContent = total.toFixed(2);
+                                        document.getElementById('detallePedidoModal').classList.add('show');
                                     });
-                                    document.getElementById('total').textContent = total.toFixed(2);
-                                    document.getElementById('detallePedidoModal').classList.add('show');
-                                });
+                            };
+                        });
+
+                        // Cerrar modal de detalle
+                        document.querySelector('.closeEdit').onclick = function () {
+                            document.getElementById('detallePedidoModal').classList.remove('show');
+                        };
+                        window.onclick = function (event) {
+                            if (event.target === document.getElementById('detallePedidoModal')) {
+                                document.getElementById('detallePedidoModal').classList.remove('show');
+                            }
                         };
                     });
-
-                    // Cerrar modal de detalle
-                    document.querySelector('.closeEdit').onclick = function () {
-                        document.getElementById('detallePedidoModal').classList.remove('show');
-                    };
-                    window.onclick = function (event) {
-                        if (event.target === document.getElementById('detallePedidoModal')) {
-                            document.getElementById('detallePedidoModal').classList.remove('show');
-                        }
-                    };
-                });
-                // Filtrar productos al escribir o al hacer clic en el botón
-                function filtrarProductos() {
-                    const filtro = document.getElementById('searchInput').value.toLowerCase();
-                    document.querySelectorAll('#crearPedidoForm tbody tr').forEach(row => {
-                        const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
-                        row.style.display = nombre.includes(filtro) ? '' : 'none';
-                    });
-                }
-                document.getElementById('searchInput').addEventListener('input', filtrarProductos);
-                document.querySelector('.search-button').addEventListener('click', filtrarProductos);
-            </script>
-    </main>
-
-
+                    // Filtrar productos al escribir o al hacer clic en el botón
+                    function filtrarProductos() {
+                        const filtro = document.getElementById('searchInput').value.toLowerCase();
+                        document.querySelectorAll('#crearPedidoForm tbody tr').forEach(row => {
+                            const nombre = row.querySelector('td')?.textContent?.toLowerCase() || '';
+                            row.style.display = nombre.includes(filtro) ? '' : 'none';
+                        });
+                    }
+                    document.getElementById('searchInput').addEventListener('input', filtrarProductos);
+                    document.querySelector('.search-button').addEventListener('click', filtrarProductos);
+                </script>
+        </main>
+    </div>
 </body>
-
-
-</html>

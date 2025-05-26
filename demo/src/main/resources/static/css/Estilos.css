@@ -592,3 +592,20 @@ select#proveedorEdit:focus {
     }
 
 }
+
+@media (max-width: 900px) {
+    #sidebar.hidden {
+        transform: translateX(-100%);
+        position: absolute;
+        z-index: 1000;
+        background: #b3d6d4;
+    }
+
+    #sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        transition: transform 0.3s;
+    }
+}
