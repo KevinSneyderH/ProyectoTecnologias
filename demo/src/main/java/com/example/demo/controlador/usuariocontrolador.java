@@ -115,7 +115,7 @@ public class usuariocontrolador {
                 .toList();
 
         model.addAttribute("productosBajoStock", productosBajoStock);
-
+        model.addAttribute("paginaActual", "Principal");
         return "principal";
     }
 

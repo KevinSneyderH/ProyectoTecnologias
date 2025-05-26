@@ -64,7 +64,10 @@ public class transaccionescontrolador {
             t.put("cantidad", compra.getCantidad());
             t.put("costoUnitario", compra.getPrecio_compra_proveedor());
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
-            t.put("idProducto", compra.getIdProducto() != null ? compra.getIdProducto().getId_producto() : ""); // <--- AGREGA ESTA LÍNEA
+            t.put("idProducto", compra.getIdProducto() != null ? compra.getIdProducto().getId_producto() : ""); // <---
+                                                                                                                // AGREGA
+                                                                                                                // ESTA
+                                                                                                                // LÍNEA
             t.put("usuario",
                     compra.getCompra() != null ? compra.getCompra().getUsuario().getNombreUsuario() : "");
             transacciones.add(t);
@@ -82,9 +85,13 @@ public class transaccionescontrolador {
             t.put("cantidad", pedido.getCantidadSolicitada());
             t.put("costoUnitario", pedido.getPrecioTotalCompra());
             t.put("producto", pedido.getIdProducto() != null ? pedido.getIdProducto().getNombre() : "");
-            t.put("idProducto", pedido.getIdProducto() != null ? pedido.getIdProducto().getId_producto() : ""); // <--- AGREGA ESTA LÍNEA
-            t.put("usuario",pedido.getIdPedido() != null ? pedido.getIdPedido().getIdUsuario().getNombreUsuario() : "");
-                    
+            t.put("idProducto", pedido.getIdProducto() != null ? pedido.getIdProducto().getId_producto() : ""); // <---
+                                                                                                                // AGREGA
+                                                                                                                // ESTA
+                                                                                                                // LÍNEA
+            t.put("usuario",
+                    pedido.getIdPedido() != null ? pedido.getIdPedido().getIdUsuario().getNombreUsuario() : "");
+
             transacciones.add(t);
         }
 
@@ -96,6 +103,7 @@ public class transaccionescontrolador {
         List<usuarioenty> listusuario = usuarioservicio.findAll();
         model.addAttribute("listusuario", listusuario);
 
+        model.addAttribute("paginaActual", "Transacciones");
         return "transacciones"; // Si no está autenticado, puede ver el formulario de login
     }
 

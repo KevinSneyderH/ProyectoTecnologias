@@ -71,6 +71,7 @@ public class productocontrolador {
 
         List<categoriaenty> listaCategorias = categoriaservicio.findAll();
         model.addAttribute("listaCategorias", listaCategorias);
+        model.addAttribute("paginaActual", "Productos");
 
         return "productos";
     }

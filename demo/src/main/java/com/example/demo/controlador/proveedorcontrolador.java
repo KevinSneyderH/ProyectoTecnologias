@@ -45,6 +45,7 @@ public class proveedorcontrolador {
 
         List<proveedorenty> listaProveedor = proveedorservicio.findAll(); // recupera todos los usuarios
         model.addAttribute("listaProveedor", listaProveedor); // añade la lista de usuarios a la vista
+        model.addAttribute("paginaActual", "Proveedores");
         return "proveedores";
     }
 

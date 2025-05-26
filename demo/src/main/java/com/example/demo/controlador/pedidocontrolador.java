@@ -61,7 +61,7 @@ public class pedidocontrolador {
 
         List<productoenty> productos = productoservicio.findAll();
         model.addAttribute("productos", productos);
-
+        model.addAttribute("paginaActual", "Pedidos");
         return "pedidos";
     }
 

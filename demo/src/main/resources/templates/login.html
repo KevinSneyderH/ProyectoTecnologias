@@ -6,30 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <link rel="stylesheet" th:href="@{/css/Estilos.css}">
-
 </head>
 
 <body class="login">
     <div class="background-blur"></div>
     <div class="login-container">
         <h2>Inicio de Sesión</h2>
-        <form action="/login" method="post">
+        <form action="/login" method="post" autocomplete="off">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="input-group">
                 <span class="input-icon"><i class="fas fa-user"></i></span>
-                <input type="text" name="username" placeholder="Usuario" required>
+                <input type="text" name="username" placeholder="Usuario" required autocomplete="username">
             </div>
             <div class="input-group">
                 <span class="input-icon"><i class="fas fa-lock"></i></span>
-                <input type="password" name="password" placeholder="Contraseña" required>
+                <input type="password" name="password" placeholder="Contraseña" required
+                    autocomplete="current-password">
             </div>
             <a href="#" class="forgot-password">¿Ha olvidado su contraseña?</a>
             <button type="submit" class="login-btn">Iniciar Sesión</button>
             <p th:if="${param.error}" style="color:red;">Credenciales incorrectas</p>
-
         </form>
-
     </div>
 </body>
 

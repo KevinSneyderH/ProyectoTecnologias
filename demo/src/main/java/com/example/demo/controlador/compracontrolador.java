@@ -57,7 +57,7 @@ public class compracontrolador {
 
         List<categoriaenty> categorias = categoriaservicio.findAll();
         model.addAttribute("categorias", categorias);
-
+        model.addAttribute("paginaActual", "Compras");
         return "compra";
     }
 
