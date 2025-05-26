@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-05-2025 a las 05:53:27
+-- Tiempo de generación: 26-05-2025 a las 17:56:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -73,7 +73,14 @@ INSERT INTO `compraenty` (`id_compra`, `fecha`, `estado`, `costo_total`, `id_pro
 (27, '2025-05-22 23:16:37', 'Pendiente', 6800000, 878923, 6),
 (28, '2025-05-24 21:22:26', 'Pendiente', 3900, NULL, 13),
 (29, '2025-05-24 21:22:35', 'Pendiente', 6000000, NULL, 13),
-(30, '2025-05-24 21:30:45', 'Pendiente', 18003900, NULL, 13);
+(30, '2025-05-24 21:30:45', 'Pendiente', 18003900, NULL, 13),
+(31, '2025-05-26 07:06:00', 'Pendiente', 3000000, NULL, 6),
+(32, '2025-05-26 07:53:50', 'Pendiente', 1000000, NULL, 6),
+(33, '2025-05-26 07:55:23', 'Pendiente', 1000000, NULL, 6),
+(34, '2025-05-26 08:17:37', 'Pendiente', 12003900, NULL, 6),
+(35, '2025-05-26 08:18:28', 'Pendiente', 15600, NULL, 6),
+(36, '2025-05-26 08:19:00', 'Pendiente', 30000000, NULL, 6),
+(39, '2025-05-26 08:21:43', 'Pendiente', 60000000, NULL, 6);
 
 -- --------------------------------------------------------
 
@@ -104,19 +111,16 @@ INSERT INTO `detallecompra` (`id`, `idproducto`, `cantidad`, `precio_compra_prov
 (57, 20, 1, 6000000.00, 29),
 (58, 17, 1, 3900.00, 30),
 (59, 18, 1, 6000000.00, 30),
-(60, 20, 2, 12000000.00, 30);
-
---
--- Disparadores `detallecompra`
---
-DELIMITER $$
-CREATE TRIGGER `trg_actualizar_stock_compra` AFTER INSERT ON `detallecompra` FOR EACH ROW BEGIN
-    UPDATE productoenty
-    SET cantidad_en_stock = cantidad_en_stock + NEW.cantidad
-    WHERE id_producto = NEW.idproducto;
-END
-$$
-DELIMITER ;
+(60, 20, 2, 12000000.00, 30),
+(61, 18, 1, 3000000.00, 31),
+(62, 18, 1, 1000000.00, 32),
+(63, 18, 1, 1000000.00, 33),
+(64, 17, 1, 3900.00, 34),
+(65, 18, 1, 6000000.00, 34),
+(66, 20, 1, 6000000.00, 34),
+(67, 17, 4, 15600.00, 35),
+(68, 18, 5, 30000000.00, 36),
+(69, 20, 10, 60000000.00, 39);
 
 -- --------------------------------------------------------
 
@@ -139,15 +143,24 @@ CREATE TABLE `detallepedido` (
 INSERT INTO `detallepedido` (`id_detalle_pedido`, `cantidad_solicitada`, `subtotal`, `id_pedido`, `id_producto`) VALUES
 (81, 5, 19500.00, 55, 17),
 (82, 5, 19500.00, 56, 17),
-(83, 1, 6000000.00, 56, 18),
+(83, 1, 3000000.00, 56, 18),
 (84, 1, 3900.00, 57, 17),
-(85, 1, 6000000.00, 57, 18),
+(85, 1, 3000000.00, 57, 18),
 (87, 1, 3900.00, 58, 17),
 (88, 2, 7800.00, 59, 17),
-(89, 4, 24000000.00, 61, 18),
-(90, 1, 6000000.00, 62, 18),
+(89, 4, 12000000.00, 61, 18),
+(90, 1, 3000000.00, 62, 18),
 (91, 2, 7800.00, 63, 17),
-(92, 1, 6000000.00, 64, 18);
+(92, 1, 3000000.00, 64, 18),
+(93, 1, 3000000.00, 65, 18),
+(94, 2, 12000000.00, 65, 20),
+(95, 1, 3900.00, 66, 17),
+(96, 1, 6000000.00, 66, 18),
+(97, 1, 6000000.00, 66, 20),
+(98, 1, 3900.00, 67, 17),
+(99, 1, 6000000.00, 67, 18),
+(100, 1, 6000000.00, 67, 20),
+(101, 5, 30000000.00, 68, 18);
 
 -- --------------------------------------------------------
 
@@ -198,7 +211,11 @@ INSERT INTO `pedidoenty` (`id_pedido`, `fecha_creacion`, `estado_pedido`, `costo
 (61, '2025-05-22 00:00:00', 'Pendiente', 24000000, 6),
 (62, '2025-05-22 23:09:25', 'Pendiente', 6000000, 6),
 (63, '2025-05-22 23:09:35', 'Pendiente', 7800, 6),
-(64, '2025-05-24 21:13:19', 'Pendiente', 6000000, 13);
+(64, '2025-05-24 21:13:19', 'Pendiente', 6000000, 13),
+(65, '2025-05-26 07:55:47', 'Pendiente', 13000000, 6),
+(66, '2025-05-26 08:16:09', 'Pendiente', 12003900, 6),
+(67, '2025-05-26 08:18:18', 'Pendiente', 12003900, 6),
+(68, '2025-05-26 08:19:10', 'Pendiente', 30000000, 6);
 
 -- --------------------------------------------------------
 
@@ -221,22 +238,9 @@ CREATE TABLE `productoenty` (
 --
 
 INSERT INTO `productoenty` (`id_producto`, `nombre`, `cantidad_en_stock`, `precio_venta_unitario`, `url_imagen`, `marca`, `categoría`) VALUES
-(17, 'Arroz', 78, 3900, 'https://exitocol.vteximg.com.br/arquivos/ids/27182455/Arroz-Blanco-Bolsa-X-3000g-130407_a.jpg', 3, 5),
-(18, 'Televisor 24\'\'', 6, 6000000, 'https://fullhogar.com.co/cdn/shop/files/50UT7300PSA.AWCQ-3.jpg?v=1718818028', 1, 1),
-(20, 'CARRAZO', 3, 6000000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS6G59YqQb8j9NhGKxGDHRLm4296H5QRhO5g&s', 2, 4);
-
---
--- Disparadores `productoenty`
---
-DELIMITER $$
-CREATE TRIGGER `actualizar_subtotal_producto` AFTER UPDATE ON `productoenty` FOR EACH ROW BEGIN
-    -- Actualiza los subtotales de todos los detalles relacionados con este producto
-    UPDATE detallepedido 
-    SET subtotal = NEW.precio_venta_unitario * cantidad_solicitada
-    WHERE id_producto = NEW.id_producto;
-END
-$$
-DELIMITER ;
+(17, 'Arroz', 81, 3900, 'https://exitocol.vteximg.com.br/arquivos/ids/27182455/Arroz-Blanco-Bolsa-X-3000g-130407_a.jpg', 3, 5),
+(18, 'Televisor 24', 7, 6000000, 'https://fullhogar.com.co/cdn/shop/files/50UT7300PSA.AWCQ-3.jpg?v=1718818028', 1, 1),
+(20, 'CARRAZO', 10, 6000000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS6G59YqQb8j9NhGKxGDHRLm4296H5QRhO5g&s', 2, 4);
 
 -- --------------------------------------------------------
 
@@ -377,19 +381,19 @@ ALTER TABLE `categoriaenty`
 -- AUTO_INCREMENT de la tabla `compraenty`
 --
 ALTER TABLE `compraenty`
-  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `detallecompra`
 --
 ALTER TABLE `detallecompra`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT de la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `id_detalle_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT de la tabla `marcaenty`
@@ -401,7 +405,7 @@ ALTER TABLE `marcaenty`
 -- AUTO_INCREMENT de la tabla `pedidoenty`
 --
 ALTER TABLE `pedidoenty`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT de la tabla `productoenty`
@@ -437,7 +441,7 @@ ALTER TABLE `detallecompra`
 -- Filtros para la tabla `detallepedido`
 --
 ALTER TABLE `detallepedido`
-  ADD CONSTRAINT `detallepedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidoenty` (`id_pedido`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detallepedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidoenty` (`id_pedido`),
   ADD CONSTRAINT `detallepedido_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productoenty` (`id_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
