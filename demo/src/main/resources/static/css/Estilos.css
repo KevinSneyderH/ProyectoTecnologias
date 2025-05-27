@@ -485,7 +485,7 @@ th {
 }
 
 /* Estilo para el select de proveedores */
-select[name="Select"],
+select[name="categoria"],
 select#proveedorEdit {
     width: 100%;
     padding: 8px 12px;
@@ -498,7 +498,27 @@ select#proveedorEdit {
     transition: border-color 0.2s;
 }
 
-select[name="Select"]:focus,
+select[name="categoria"]:focus,
+select#proveedorEdit:focus {
+    border-color: #007bff;
+    outline: none;
+    background: #fff;
+}
+
+select[name="marca"],
+select#proveedorEdit {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #bfc9d1;
+    border-radius: 6px;
+    background: #f7fafc;
+    color: #222;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+}
+
+select[name="marca"]:focus,
 select#proveedorEdit:focus {
     border-color: #007bff;
     outline: none;
@@ -523,6 +543,47 @@ select#proveedorEdit:focus {
     border-color: #007bff;
     outline: none;
     background: #fff;
+}
+
+/* Alert personalizado centrado */
+.custom-alert {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-alert.show {
+    display: flex;
+}
+
+.custom-alert-content {
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 250px;
+    font-size: 1.1rem;
+    color: #14424b;
+    position: relative;
+}
+
+.custom-alert-content button {
+    margin-top: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    background: #14424b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 /* Responsive Adjustments */

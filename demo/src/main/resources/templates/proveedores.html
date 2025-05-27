@@ -11,83 +11,87 @@
 </head>
 
 <body>
-    <div th:replace="fragments :: layout('Proveedores', ~{::main})"></div>
-    <main>
+    <div th:replace="~{fragments :: layout('Proveedores', ~{::main})}">
+        <main>
 
 
-        <div class="dashboard">
-            <div class="card">
+            <div class="dashboard">
                 <div class="card">
-                    <div class="top-actions">
-                        <button id="openModalBtnAgregar">Agregar Proveedor</button>
+                    <div class="card">
+                        <div class="top-actions">
+                            <button id="openModalBtnAgregar">Agregar Proveedor</button>
 
-                    </div>
-                    <div class="center-search">
-                        <div class="search-container">
-                            <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
-                            <button class="search-button">🔍 Buscar</button>
                         </div>
-                    </div>
+                        <div class="center-search">
+                            <div class="search-container">
+                                <input id="searchInput" type="text" class="search-input"
+                                    placeholder="Buscar producto...">
+                                <button class="search-button">🔍 Buscar</button>
+                            </div>
+                        </div>
 
-                    <h3>Proveedores</h3>
-                    <div class="table-container">
-                        <table id="productTable">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Contacto Principal</th>
-                                    <th>Teléfono</th>
-                                    <th>Email</th>
-                                    <th>Dirección</th>
-                                    <th>Eliminar</th>
-                                    <th>Editar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="proveedor : ${listaProveedor}">
-                                    <td th:text="${proveedor.nombre_empresa}"></td>
-                                    <td th:text="${proveedor.contacto_principal}"></td>
-                                    <td th:text="${proveedor.telefono}"></td>
-                                    <td th:text="${proveedor.email}"></td>
-                                    <td th:text="${proveedor.direccion}"></td>
-                                    <td>
-                                        <form th:action="@{/deleteProveedor}" method="post">
-                                            <input type="hidden" name="idproveedor"
-                                                th:value="${proveedor.id_proveedor}" />
+                        <h3>Proveedores</h3>
+                        <div class="table-container">
+                            <table id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Contacto Principal</th>
+                                        <th>Teléfono</th>
+                                        <th>Email</th>
+                                        <th>Dirección</th>
+                                        <th>Eliminar</th>
+                                        <th>Editar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="proveedor : ${listaProveedor}">
+                                        <td th:text="${proveedor.nombre_empresa}"></td>
+                                        <td th:text="${proveedor.contacto_principal}"></td>
+                                        <td th:text="${proveedor.telefono}"></td>
+                                        <td th:text="${proveedor.email}"></td>
+                                        <td th:text="${proveedor.direccion}"></td>
+                                        <td>
+                                            <form th:action="@{/deleteProveedor}" method="post">
+                                                <input type="hidden" th:name="${_csrf.parameterName}"
+                                                    th:value="${_csrf.token}" />
+                                                <input type="hidden" name="idproveedor"
+                                                    th:value="${proveedor.id_proveedor}" />
+                                                <div class="top-actions">
+                                                    <button type="submit"
+                                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este proveedor?')">
+                                                        Eliminar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td>
                                             <div class="top-actions">
-                                                <button type="submit"
-                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este proveedor?')">
-                                                    Eliminar
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <div class="top-actions">
-                                            <button type="button" class="edit-btn" th:attr="data-id=${proveedor.id_proveedor},
+                                                <button type="button" class="edit-btn" th:attr="data-id=${proveedor.id_proveedor},
              data-nombre=${proveedor.nombre_empresa},
              data-contacto=${proveedor.contacto_principal},
              data-telefono=${proveedor.telefono},
              data-email=${proveedor.email},
              data-direccion=${proveedor.direccion}">
-                                                Editar Proveedor
-                                            </button>
-                                        </div>
-                                    </td>
+                                                    Editar Proveedor
+                                                </button>
+                                            </div>
+                                        </td>
 
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-    </main>
+        </main>
     </div>
     <div id="productModalAgregar" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Añadir Proveedor</h2>
             <form method="post" action="/insertProveedor">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <label>Nit Empresa:<br>
                     <input type="text" id="id_proveedor" name="id_proveedor" placeholder="Ej. 1" required>
                 </label><br>
@@ -121,6 +125,7 @@
             <h2>Editar Proveedor</h2>
             <!-- Modal Editar Proveedor -->
             <form method="post" action="/editProveedor">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" id="idProveedorEdit" name="id_proveedor">
                 <label>Nombre de la Empresa:<br>
                     <input type="text" id="nombreempresaEdit" name="nombre_empresa" required>
@@ -146,73 +151,105 @@
         </div>
     </div>
     <script>
-
         document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('searchInput');
-            input.addEventListener('input', () => {
-                const filter = input.value.toLowerCase();
-                const rows = document.querySelectorAll('#productTable tbody tr');
-
-                rows.forEach(row => {
-                    const productName = row.querySelector('td')?.textContent.toLowerCase() || '';
-                    row.style.display = productName.includes(filter) ? '' : 'none';
+            try {
+                const input = document.getElementById('searchInput');
+                input.addEventListener('input', () => {
+                    const filter = input.value.toLowerCase();
+                    const rows = document.querySelectorAll('#productTable tbody tr');
+                    rows.forEach(row => {
+                        const productName = row.querySelector('td')?.textContent.toLowerCase() || '';
+                        row.style.display = productName.includes(filter) ? '' : 'none';
+                    });
                 });
-            });
+            } catch (error) {
+                showCustomAlert("Error al buscar proveedores.", "error");
+                console.error(error);
+            }
         });
 
-        // ...código existente...
-
         // Referencias a elementos
-        const modal = document.getElementById("productModal");
-        const openBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.querySelector(".closeEdit");
-
-        const modalAgregar = document.getElementById("productModalAgregar");
-        const openBtnAgregar = document.getElementById("openModalBtnAgregar");
-        const closeBtnAgregar = document.querySelector(".close");
+        let modal, openBtn, closeBtn, modalAgregar, openBtnAgregar, closeBtnAgregar;
+        try {
+            modal = document.getElementById("productModal");
+            openBtn = document.getElementById("openModalBtn");
+            closeBtn = document.querySelector(".closeEdit");
+            modalAgregar = document.getElementById("productModalAgregar");
+            openBtnAgregar = document.getElementById("openModalBtnAgregar");
+            closeBtnAgregar = document.querySelector(".close");
+        } catch (error) {
+            showCustomAlert("Error al inicializar los modales.", "error");
+            console.error(error);
+        }
 
         // Mostrar modal agregar
         if (openBtnAgregar) {
             openBtnAgregar.onclick = () => {
-                modalAgregar.classList.add("show");
+                try {
+                    modalAgregar.classList.add("show");
+                } catch (error) {
+                    showCustomAlert("Error al abrir el formulario de proveedor.", "error");
+                    console.error(error);
+                }
             };
         }
         if (closeBtnAgregar) {
             closeBtnAgregar.onclick = () => {
-                modalAgregar.classList.remove("show");
+                try {
+                    modalAgregar.classList.remove("show");
+                } catch (error) {
+                    showCustomAlert("Error al cerrar el formulario de proveedor.", "error");
+                    console.error(error);
+                }
             };
         }
 
         // Mostrar modal editar (se abre solo desde los botones de la tabla)
         if (closeBtn) {
             closeBtn.onclick = () => {
-                modal.classList.remove("show");
+                try {
+                    modal.classList.remove("show");
+                } catch (error) {
+                    showCustomAlert("Error al cerrar el formulario de edición.", "error");
+                    console.error(error);
+                }
             };
         }
 
         // Ocultar modales al hacer clic fuera del contenido
         window.onclick = (event) => {
-            if (event.target === modal) {
-                modal.classList.remove("show");
-            }
-            if (event.target === modalAgregar) {
-                modalAgregar.classList.remove("show");
+            try {
+                if (event.target === modal) {
+                    modal.classList.remove("show");
+                }
+                if (event.target === modalAgregar) {
+                    modalAgregar.classList.remove("show");
+                }
+            } catch (error) {
+                showCustomAlert("Error al cerrar el modal.", "error");
+                console.error(error);
             }
         };
 
         // Llenar el modal de edición con los datos correctos
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function () {
-                document.getElementById('idProveedorEdit').value = this.getAttribute('data-id');
-                document.getElementById('nombreempresaEdit').value = this.getAttribute('data-nombre');
-                document.getElementById('ContactoPrincipalEdit').value = this.getAttribute('data-contacto');
-                document.getElementById('TelefonoEdit').value = this.getAttribute('data-telefono');
-                document.getElementById('CorreoEdit').value = this.getAttribute('data-email');
-                document.getElementById('direccionEdit').value = this.getAttribute('data-direccion');
-                modal.classList.add('show');
+                try {
+                    document.getElementById('idProveedorEdit').value = this.getAttribute('data-id');
+                    document.getElementById('nombreempresaEdit').value = this.getAttribute('data-nombre');
+                    document.getElementById('ContactoPrincipalEdit').value = this.getAttribute('data-contacto');
+                    document.getElementById('TelefonoEdit').value = this.getAttribute('data-telefono');
+                    document.getElementById('CorreoEdit').value = this.getAttribute('data-email');
+                    document.getElementById('direccionEdit').value = this.getAttribute('data-direccion');
+                    modal.classList.add('show');
+                } catch (error) {
+                    showCustomAlert("Error al cargar los datos del proveedor.", "error");
+                    console.error(error);
+                }
             });
         });
     </script>
+
 </body>
 
 </html>

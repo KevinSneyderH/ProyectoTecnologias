@@ -53,6 +53,8 @@
                                     <td th:text="${producto.idcategoria.nombre}"></td>
                                     <td>
                                         <form th:action="@{/deleteProducto}" method="post">
+                                            <input type="hidden" th:name="${_csrf.parameterName}"
+                                                th:value="${_csrf.token}" />
                                             <input type="hidden" name="idproducto" th:value="${producto.id_producto}" />
                                             <div class="top-actions">
                                                 <button type="submit"
@@ -86,6 +88,7 @@
             <span class="close">&times;</span>
             <h2>Añadir Producto</h2>
             <form method="post" action="/insertProducto">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <label>Nombre:<br>
                     <input type="text" id="nombreproducto" name="nombre" placeholder="Ej. televisor" required>
                 </label><br>
@@ -93,13 +96,15 @@
                     <input type="text" id="PrecioVenta" name="precio_venta_unitario" placeholder="Ej. 200" required>
                 </label><br>
                 <label>Marca:<br>
-                    <select name="Select" required>
+                    <select name="marca" required>
+                        <option value="" disabled selected>Seleccione una marca</option>
                         <option th:each="marca : ${listaMarcas}" th:value="${marca.id}" th:text="${marca.nombre}">
                         </option>
                     </select>
                 </label><br>
                 <label>Categoria:<br>
-                    <select name="Select" required>
+                    <select name="categoria" required>
+                        <option value="" disabled selected>Seleccione una categoría</option>
                         <option th:each="categoria : ${listaCategorias}" th:value="${categoria.id}"
                             th:text="${categoria.nombre}"></option>
                     </select>
@@ -121,6 +126,7 @@
             <span class="closeEdit">&times;</span>
             <h2>Editar Producto</h2>
             <form method="post" action="/editProducto">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <input type="hidden" id="idProductoEdit" name="id_producto">
                 <label>Nombre:<br>
                     <input type="text" id="nombreProductoEdit" name="nombre" required>
@@ -161,46 +167,74 @@
         // Mostrar modal editar producto y llenar campos
         document.querySelectorAll('.edit-product-btn').forEach(btn => {
             btn.addEventListener('click', function () {
-                document.getElementById('idProductoEdit').value = this.getAttribute('data-id');
-                document.getElementById('nombreProductoEdit').value = this.getAttribute('data-nombre');
-                document.getElementById('precioProductoEdit').value = this.getAttribute('data-precio');
-                document.getElementById('urlProductoEdit').value = this.getAttribute('data-url');
-                productEditModal.classList.add('show');
+                try {
+                    document.getElementById('idProductoEdit').value = this.getAttribute('data-id');
+                    document.getElementById('nombreProductoEdit').value = this.getAttribute('data-nombre');
+                    document.getElementById('precioProductoEdit').value = this.getAttribute('data-precio');
+                    document.getElementById('urlProductoEdit').value = this.getAttribute('data-url');
+                    productEditModal.classList.add('show');
+                } catch (error) {
+                    showCustomAlert("Error al cargar los datos del producto.", "error");
+                    console.error(error);
+                }
             });
         });
+
+        // Definir referencias a los elementos del modal de agregar producto
+        const openBtnAgregar = document.getElementById("openModalBtnAgregar");
+        const modalAgregar = document.getElementById("productModalAgregar");
+        const closeBtnAgregar = document.querySelector(".close");
+
+        // Mostrar modal agregar producto
+        if (openBtnAgregar) {
+            openBtnAgregar.onclick = () => {
+                try {
+                    modalAgregar.classList.add("show");
+                } catch (error) {
+                    showCustomAlert("Error al abrir el formulario de producto.", "error");
+                    console.error(error);
+                }
+            };
+        }
 
         // Cerrar modal editar producto
         if (closeEditBtn) {
             closeEditBtn.onclick = () => {
-                productEditModal.classList.remove("show");
+                try {
+                    productEditModal.classList.remove("show");
+                } catch (error) {
+                    showCustomAlert("Error al cerrar el formulario.", "error");
+                    console.error(error);
+                }
+            };
+        }
+
+        // Cerrar modal agregar producto
+        if (closeBtnAgregar) {
+            closeBtnAgregar.onclick = () => {
+                try {
+                    modalAgregar.classList.remove("show");
+                } catch (error) {
+                    showCustomAlert("Error al cerrar el formulario.", "error");
+                    console.error(error);
+                }
             };
         }
 
         // Ocultar modal al hacer clic fuera del contenido
         window.onclick = (event) => {
-            if (event.target === productEditModal) {
-                productEditModal.classList.remove("show");
-            }
-            if (event.target === modalAgregar) {
-                modalAgregar.classList.remove("show");
+            try {
+                if (event.target === productEditModal) {
+                    productEditModal.classList.remove("show");
+                }
+                if (event.target === modalAgregar) {
+                    modalAgregar.classList.remove("show");
+                }
+            } catch (error) {
+                showCustomAlert("Error al cerrar el modal.", "error");
+                console.error(error);
             }
         };
-
-        // Mostrar modal agregar producto
-        const openBtnAgregar = document.getElementById("openModalBtnAgregar");
-        const modalAgregar = document.getElementById("productModalAgregar");
-        const closeBtnAgregar = document.querySelector(".close");
-
-        if (openBtnAgregar) {
-            openBtnAgregar.onclick = () => {
-                modalAgregar.classList.add("show");
-            };
-        }
-        if (closeBtnAgregar) {
-            closeBtnAgregar.onclick = () => {
-                modalAgregar.classList.remove("show");
-            };
-        }
     </script>
 </body>
 

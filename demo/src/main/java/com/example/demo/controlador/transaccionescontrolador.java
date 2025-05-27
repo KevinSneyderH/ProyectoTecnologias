@@ -1,6 +1,10 @@
 package com.example.demo.controlador;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +63,12 @@ public class transaccionescontrolador {
         // Procesar compras
         for (detallecompra compra : compras) {
             Map<String, Object> t = new HashMap<>();
-            t.put("fecha", compra.getCompra().getFecha().toString());
+            t.put("fecha", compra.getCompra().getFecha());
             t.put("tipo", "Compra");
             t.put("cantidad", compra.getCantidad());
             t.put("costoUnitario", compra.getPrecio_compra_proveedor());
             t.put("producto", compra.getIdProducto() != null ? compra.getIdProducto().getNombre() : "");
-            t.put("idProducto", compra.getIdProducto() != null ? compra.getIdProducto().getId_producto() : ""); // <---
-                                                                                                                // AGREGA
-                                                                                                                // ESTA
-                                                                                                                // LÍNEA
+            t.put("idProducto", compra.getIdProducto() != null ? compra.getIdProducto().getId_producto() : "");
             t.put("usuario",
                     compra.getCompra() != null ? compra.getCompra().getUsuario().getNombreUsuario() : "");
             transacciones.add(t);
@@ -95,6 +96,18 @@ public class transaccionescontrolador {
             transacciones.add(t);
         }
 
+        transacciones.sort((a, b) -> {
+            Timestamp fechaA, fechaB;
+            try {
+                Object objA = a.get("fecha");
+                Object objB = b.get("fecha");
+                fechaA = objA instanceof Timestamp ? (Timestamp) objA : Timestamp.valueOf(objA.toString());
+                fechaB = objB instanceof Timestamp ? (Timestamp) objB : Timestamp.valueOf(objB.toString());
+            } catch (Exception e) {
+                return 0; // Si hay error, no cambia el orden
+            }
+            return fechaB.compareTo(fechaA); // Descendente
+        });
         model.addAttribute("transacciones", transacciones);
 
         List<productoenty> listproducto = productoservicio.findAll();

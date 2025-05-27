@@ -71,6 +71,7 @@ public class productocontrolador {
 
         List<categoriaenty> listaCategorias = categoriaservicio.findAll();
         model.addAttribute("listaCategorias", listaCategorias);
+
         model.addAttribute("paginaActual", "Productos");
 
         return "productos";
@@ -97,6 +98,9 @@ public class productocontrolador {
             if (producto != null) {
                 producto.setNombre(nombre);
                 producto.setPrecio_venta_unitario(precio_venta_unitario);
+
+                // Buscar y asignar la categoría y marca
+
                 producto.setUrl_imagen(url_imagen);
                 productoservicio.save(producto);
             }
@@ -108,8 +112,28 @@ public class productocontrolador {
 
     @PostMapping("/insertProducto")
     public String insertProducto(
-            @Validated productoenty objProducto) {
-        productoservicio.save(objProducto);
+            @RequestParam String nombre,
+            @RequestParam double precio_venta_unitario,
+            @RequestParam int categoria,
+            @RequestParam int marca,
+            @RequestParam String url_imagen) {
+        try {
+            productoenty producto = new productoenty();
+            producto.setNombre(nombre);
+            producto.setPrecio_venta_unitario(precio_venta_unitario);
+            producto.setUrl_imagen(url_imagen);
+
+            // Buscar y asignar la categoría y marca
+            categoriaenty catObj = categoriaservicio.findById(categoria).orElse(null);
+            marcaenty marcaObj = marcaservicio.findById(marca).orElse(null);
+
+            producto.setIdcategoria(catObj);
+            producto.setIdmarca(marcaObj);
+
+            productoservicio.save(producto);
+        } catch (Exception e) {
+            System.out.println("Error al insertar producto: " + e.getMessage());
+        }
         return "redirect:/Productos";
     }
 

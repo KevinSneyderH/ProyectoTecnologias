@@ -1,20 +1,18 @@
 function filtrar() {
   // Eliminar el mensaje de "No hay resultados" si existe
   let mensaje = document.getElementById("sin-resultados");
-  if (mensaje) {
-    mensaje.remove();
-  }
+  if (mensaje) mensaje.remove();
 
   // Mostrar todas las filas antes de filtrar
   document.querySelectorAll("#tbody tr").forEach(fila => fila.style.display = "");
 
-  const fecha = document.getElementById("fecha").value;
+  const fechaOrden = document.getElementById("fecha").value;
   const tipo = document.getElementById("tipo").value;
   const producto = document.getElementById("producto").value;
   const usuario = document.getElementById("usuario").value;
 
   // Solo filas de datos, sin el mensaje
-  const filas = Array.from(document.querySelectorAll("#tbody tr")).filter(fila => fila.id !== "sin-resultados");
+  let filas = Array.from(document.querySelectorAll("#tbody tr")).filter(fila => fila.id !== "sin-resultados");
   let filtradas = Array.from(filas);
 
   // Filtrar por tipo
@@ -22,50 +20,48 @@ function filtrar() {
     filtradas = filtradas.filter(fila => fila.cells[1].textContent.trim() === tipo);
   }
 
-  // Filtrar por producto (convertir ambos a string)
+  // Filtrar por producto
   if (producto) {
     filtradas = filtradas.filter(fila => String(fila.cells[4].dataset.producto) === String(producto));
   }
 
+  // Filtrar por usuario
   if (usuario) {
     filtradas = filtradas.filter(fila => String(fila.cells[5].dataset.usuario) === String(usuario));
   }
 
-
-  // Ordenar por fecha
-  if (fecha) {
+  // ORDENAR por fecha si se selecciona
+  if (fechaOrden === "desc" || fechaOrden === "asc") {
     filtradas.sort((a, b) => {
-      const aFecha = parseFecha(a.cells[0].dataset.fecha);
-      const bFecha = parseFecha(b.cells[0].dataset.fecha);
-      return fecha === "asc" ? aFecha - bFecha : bFecha - aFecha;
+      // Convierte "2025-05-26 20:55:05.0" a "2025-05-26T20:55:05"
+      function parseFecha(fechaStr) {
+        if (!fechaStr) return new Date("1900-01-01");
+        // Quita el .0 final si existe
+        fechaStr = fechaStr.replace(".0", "");
+        // Reemplaza espacio por T
+        fechaStr = fechaStr.replace(" ", "T");
+        return new Date(fechaStr);
+      }
+      const fechaA = parseFecha(a.cells[0].dataset.fecha);
+      const fechaB = parseFecha(b.cells[0].dataset.fecha);
+      return fechaOrden === "desc" ? fechaB - fechaA : fechaA - fechaB;
     });
-
-
   }
 
-  // Ocultar todas las filas
+  // Ocultar todas y mostrar solo las filtradas
   filas.forEach(fila => fila.style.display = "none");
-
-  // Mostrar las filtradas
   filtradas.forEach(fila => fila.style.display = "");
 
-  // Mostrar mensaje si no hay resultados
+  // Si no hay resultados, mostrar mensaje
   if (filtradas.length === 0) {
-    let mensaje = document.createElement("tr");
-    mensaje.id = "sin-resultados";
-    mensaje.innerHTML = `<td colspan="7" style="text-align:center;">No hay resultados</td>`;
-    document.getElementById("tbody").appendChild(mensaje);
+    const tr = document.createElement("tr");
+    tr.id = "sin-resultados";
+    const td = document.createElement("td");
+    td.colSpan = 6;
+    td.textContent = "No hay resultados";
+    tr.appendChild(td);
+    document.getElementById("tbody").appendChild(tr);
   }
-}
-
-// Función para parsear fechas en formato dd/MM/yyyy o yyyy-MM-dd
-function parseFecha(fechaStr) {
-  if (!fechaStr) return new Date("1900-01-01");
-  if (fechaStr.includes("/")) {
-    const [d, m, y] = fechaStr.split("/");
-    return new Date(`${y}-${m}-${d}`);
-  }
-  return new Date(fechaStr); // formato ISO (yyyy-MM-dd)
 }
 
 function limpiarFiltros() {
@@ -87,4 +83,30 @@ function limpiarFiltros() {
 document.querySelector('.toggle-sidebar-btn').onclick = function () {
   document.getElementById('sidebar').classList.toggle('hidden');
 };
+
+// Ocultar sidebar al hacer clic fuera de él
+document.addEventListener('click', function (event) {
+  const sidebar = document.getElementById('sidebar');
+  const toggleBtn = document.querySelector('.toggle-sidebar-btn');
+  // Si el sidebar está visible y el clic fue fuera del aside y del botón
+  if (sidebar && !sidebar.classList.contains('hidden')) {
+    if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+      sidebar.classList.add('hidden');
+    }
+  }
+});
+
+function showCustomAlert(msg, type = "success") {
+  document.getElementById('customAlertMsg').textContent = msg;
+  const img = document.getElementById('customAlertImg');
+  if (type === "success") {
+    img.src = "/img/correcto.webp";
+  } else {
+    img.src = "/img/incorrecto.webp";
+  }
+  document.getElementById('customAlert').classList.add('show');
+}
+function closeCustomAlert() {
+  document.getElementById('customAlert').classList.remove('show');
+}
 

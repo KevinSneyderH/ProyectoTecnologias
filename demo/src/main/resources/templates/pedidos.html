@@ -65,6 +65,7 @@
                         <span class="close" style="cursor:pointer;">&times;</span>
                         <h2>Crear pedido</h2>
                         <form id="crearPedidoForm">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <input id="searchInput" type="text" class="search-input" placeholder="Buscar producto...">
                             <table>
                                 <thead>
@@ -187,11 +188,11 @@
                         });
 
                         if (!algunaCantidad) {
-                            alert("Debes ingresar al menos un producto.");
+                            showCustomAlert("Debes ingresar al menos un producto.", "error");
                             return;
                         }
                         if (!stockSuficiente) {
-                            alert(mensajeError);
+                            showCustomAlert(mensajeError, "error");
                             return;
                         }
 
@@ -206,15 +207,18 @@
                             })
                             .then(data => {
                                 if (data.success) {
-                                    alert("Pedido creado con éxito");
-                                    window.location.href = "/Pedidos";
+                                    showCustomAlert("Pedido creado con éxito, Redireccionando...", "success");
+                                    setTimeout(() => {
+                                        window.location.href = "/Pedidos";
+                                    }, 2000); // 2 segundos
+
                                 } else {
-                                    alert("Error al crear pedido");
+                                    showCustomAlert("Error al crear pedido", "error");
                                 }
                             })
                             .catch(err => {
                                 console.error(err);
-                                alert("Error al crear pedido");
+                                showCustomAlert("Error al crear pedido", "error");
                             });
                     };
 
@@ -232,7 +236,7 @@
                                 modalAgregarProducto.classList.remove("show");
 
                             })
-                            .catch(err => alert("Error al agregar producto"));
+                            .catch(err => showCustomAlert("Error al agregar producto", "error"));
                     };
 
                     // Actualiza subtotales y total al cambiar cantidades

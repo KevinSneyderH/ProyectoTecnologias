@@ -35,9 +35,17 @@
             </aside>
             <div class="main-content" th:insert="${contenido}"></div>
         </div>
-        <script src="js\funciones.js">
 
-        </script>
+        <div id="customAlert" class="custom-alert">
+            <div class="custom-alert-content">
+                <span id="customAlertMsg"></span>
+                <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                    <img id="customAlertImg" src="" height="100" width="100" alt="Alert Image">
+                </div>
+                <button onclick="closeCustomAlert()">Cerrar</button>
+            </div>
+        </div>
+        <script src="js/funciones.js"></script>
     </div>
 </body>
 

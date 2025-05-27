@@ -11,82 +11,84 @@
 </head>
 
 <body>
-    <div th:replace="fragments :: layout('Transacciones', ~{::main})"></div>
-    <main>
+    <div th:replace="fragments :: layout('Transacciones', ~{::main})">
+        <main>
 
 
-        <div class="dashboard">
-            <div class="card">
-                <h3>Transacciones</h3>
-                <div class="filtros">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>Transacciones</h3>
+                    <div class="filtros">
 
-                    <select id="fecha" name="Selectfiltos">
-                        <option value="">Fecha</option>
-                        <option value="desc">Más reciente</option>
-                        <option value="asc">Más antiguo</option>
-                    </select>
+                        <select id="fecha" name="Selectfiltos" onchange="filtrar()">
+                            <option value="">Fecha</option>
+                            <option value="desc">Más reciente</option>
+                            <option value="asc">Más antiguo</option>
+                        </select>
 
-                    <select id="tipo" name="Selectfiltos">
-                        <option value="">Tipo</option>
-                        <option value="Pedido">Pedido</option>
-                        <option value="Compra">Compra</option>
-                    </select>
-
-
-
-                    <select id="producto" name="Selectfiltos">
-                        <option value="">Producto</option>
-                        <option th:each="vproducto:${listproducto}" th:value="${vproducto.id_producto}">
-                            <font th:text="${vproducto.nombre}"></font>
-                        </option>
-                    </select>
-
-                    <select id="usuario" name="Selectfiltos">
-                        <option value="">Usuario</option>
-                        <option th:each="vusuario:${listusuario}" th:value="${vusuario.nombreUsuario}">
-                            <font th:text="${vusuario.nombreUsuario}"></font>
-                        </option>
-                    </select>
+                        <select id="tipo" name="Selectfiltos">
+                            <option value="">Tipo</option>
+                            <option value="Pedido">Pedido</option>
+                            <option value="Compra">Compra</option>
+                        </select>
 
 
-                    <div class="top-actions">
-                        <button class="buscar" onclick="filtrar()">Buscar</button>
-                        <button class="limpiar" onclick="limpiarFiltros()">Limpiar</button>
+
+                        <select id="producto" name="Selectfiltos">
+                            <option value="">Producto</option>
+                            <option th:each="vproducto:${listproducto}" th:value="${vproducto.id_producto}">
+                                <font th:text="${vproducto.nombre}"></font>
+                            </option>
+                        </select>
+
+                        <select id="usuario" name="Selectfiltos">
+                            <option value="">Usuario</option>
+                            <option th:each="vusuario:${listusuario}" th:value="${vusuario.nombreUsuario}">
+                                <font th:text="${vusuario.nombreUsuario}"></font>
+                            </option>
+                        </select>
+
+
+                        <div class="top-actions">
+                            <button class="buscar" onclick="filtrar()">Buscar</button>
+                            <button class="limpiar" onclick="limpiarFiltros()">Limpiar</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Cantidad</th>
+                                    <th>Costo Transacción</th>
+                                    <th>Producto</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <tr th:each="transaccion : ${transacciones}">
+                                    <td th:text="${transaccion.fecha}" th:attr="data-fecha=${transaccion.fecha}">-</td>
+
+                                    <td th:text="${transaccion.tipo}">-</td>
+                                    <td th:text="${transaccion.cantidad}">-</td>
+                                    <td th:text="'$' + ${#numbers.formatDecimal(transaccion.costoUnitario, 1, 'COMMA', 2, 'POINT')}"
+                                        th:attr="data-precio=${transaccion.costoUnitario}">
+                                    </td>
+                                    <td th:text="${transaccion.producto}"
+                                        th:attr="data-producto=${transaccion.idProducto}">
+                                        -</td>
+                                    <td th:text="${transaccion.usuario}" th:attr="data-usuario=${transaccion.usuario}">-
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
-                                <th>Cantidad</th>
-                                <th>Costo Transacción</th>
-                                <th>Producto</th>
-                                <th>Usuario</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody">
-                            <tr th:each="transaccion : ${transacciones}">
-                                <td th:text="${transaccion.fecha}" th:attr="data-fecha=${transaccion.fecha}">-</td>
-
-                                <td th:text="${transaccion.tipo}">-</td>
-                                <td th:text="${transaccion.cantidad}">-</td>
-                                <td th:text="'$' + ${#numbers.formatDecimal(transaccion.costoUnitario, 1, 'COMMA', 2, 'POINT')}"
-                                    th:attr="data-precio=${transaccion.costoUnitario}">
-                                </td>
-                                <td th:text="${transaccion.producto}" th:attr="data-producto=${transaccion.idProducto}">
-                                    -</td>
-                                <td th:text="${transaccion.usuario}" th:attr="data-usuario=${transaccion.usuario}">-
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
     <script th:src="@{/js/funciones.js}"></script>
 </body>
 
